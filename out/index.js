@@ -26,7 +26,7 @@ var window;
 var isWatched = false;
 electron_1.app.on('ready', () => {
     // once electron has started up, create a window.
-    fs.watch(path.join(__dirname), (eventType, fileName) => {
+    fs.watch(path.join(__dirname), { recursive: true }, (eventType, fileName) => {
         if (!isWatched) {
             isWatched = true;
             electron_1.app.relaunch();
@@ -36,10 +36,22 @@ electron_1.app.on('ready', () => {
     createWindow();
 });
 function createWindow() {
-    window = new electron_1.BrowserWindow({ width: 800, height: 600 });
+    window = new electron_1.BrowserWindow({ width: 800, height: 600, webPreferences: {
+            nodeIntegration: false,
+            contextIsolation: true,
+            preload: path.join(__dirname, "preload.js")
+        } });
     // hide the default menu bar that comes with the browser window
     window.setMenuBarVisibility(true);
     // load a website to display
-    console.log(path.join(__dirname, "index.html"));
     window.loadFile(path.join(__dirname, "index.html"));
+    window.webContents.openDevTools();
 }
+electron_1.ipcMain.on("open", (event, args) => {
+    switch (args) {
+        case "start": {
+            window.loadFile(path.join(__dirname, "start.html"));
+            break;
+        }
+    }
+});

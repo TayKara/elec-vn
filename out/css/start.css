@@ -1,0 +1,49 @@
+body{
+    background: black;
+}
+
+.container{
+    position:absolute;
+    width: 100%;
+    height: 100%;
+    margin:0;
+    padding:0;
+    top:0;
+    left:0;
+    background-image: url("../image/background.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size:contain;
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+}
+ul {
+    list-style-type:none;
+    margin: 0;
+    padding: 0;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+ 
+ 
+li button {
+    border: solid 2px gray;
+    display: block;
+    color: none;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+     
+}
+ 
+li button:hover:not(.active) {
+    border: solid 2px orange;
+}
+ 
+li button:active {
+    background-color: #4CAF50;
+}
+
