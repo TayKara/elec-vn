@@ -1,4 +1,4 @@
-import {ipcRenderer, ContextBridge, contextBridge} from "electron";
+import {ipcRenderer, contextBridge} from "electron";
 
 contextBridge.exposeInMainWorld(
     "api",{
@@ -8,6 +8,9 @@ contextBridge.exposeInMainWorld(
         receive: (channel:any, func:any)=>{
             
             ipcRenderer.on(channel, (event, ...args) => func(...args));
+        },
+        sendSync: (channel:any, data:any)=>{
+            return ipcRenderer.sendSync(channel, data);
         }
     }
 )

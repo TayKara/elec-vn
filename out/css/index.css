@@ -10,7 +10,7 @@ body{
     padding:0;
     top:0;
     left:0;
-    background-image: url("../image/background.png");
+    background-image: url("../theme/background.png");
     background-repeat: no-repeat;
     background-position: center;
     background-size:contain;

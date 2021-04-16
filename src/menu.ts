@@ -29,5 +29,6 @@ document.getElementById("buttonQuit")
     });
 
 function openWindow(message: string){
+    //@ts-ignore
     window.api.send("open", message);
 }

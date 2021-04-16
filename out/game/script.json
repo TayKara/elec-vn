@@ -1,0 +1,17 @@
+{
+    "play":[{
+        "text":"Test1",
+        "image":"1.jpg"
+    },
+    {
+        "text":"Text2"
+    },
+    {
+        "text":"Text3"
+    },
+    {
+        "text":"Text4",
+        "image":"2.jpg"
+    }
+    ]
+}

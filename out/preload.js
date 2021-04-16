@@ -7,5 +7,8 @@ electron_1.contextBridge.exposeInMainWorld("api", {
     },
     receive: (channel, func) => {
         electron_1.ipcRenderer.on(channel, (event, ...args) => func(...args));
+    },
+    sendSync: (channel, data) => {
+        return electron_1.ipcRenderer.sendSync(channel, data);
     }
 });
