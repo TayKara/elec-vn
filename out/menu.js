@@ -16,7 +16,7 @@ document.getElementById("buttonScene")
 });
 document.getElementById("buttonSettings")
     ?.addEventListener("click", (ev) => {
-    console.log(ev);
+    openWindow("settings");
 });
 document.getElementById("buttonQuit")
     ?.addEventListener("click", (ev) => {

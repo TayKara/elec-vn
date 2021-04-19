@@ -20,7 +20,7 @@ document.getElementById("buttonScene")
 
 document.getElementById("buttonSettings")
     ?.addEventListener("click", (ev:Event) => {
-        console.log(ev);
+        openWindow("settings");
     });
 
 document.getElementById("buttonQuit")
@@ -31,4 +31,5 @@ document.getElementById("buttonQuit")
 function openWindow(message: string){
     //@ts-ignore
     window.api.send("open", message);
+    
 }

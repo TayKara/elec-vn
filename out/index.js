@@ -22,13 +22,29 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const electron_1 = require("electron");
 const path = __importStar(require("path"));
 const fs = __importStar(require("fs"));
-const ScriptPlayer_1 = require("./ScriptPlayer");
-var window;
+var top;
+var settings;
+var load;
+var save;
 var isWatched = false;
+var player;
+const defaultGameSettings = {
+    "textSpeed": "5",
+    "textSkipSpeed": "5",
+    "textAutoSpeed": "5",
+    "textOpacity": "50",
+    "screen": "window",
+    "bgmVolume": "80",
+    "voiceVolume": "100",
+    "effectVolume": "80"
+};
+var gameSettings;
+var reopenSettings = false;
+loadFiles();
 electron_1.app.on('ready', () => {
     // once electron has started up, create a window.
     fs.watch(path.join(__dirname), { recursive: true }, (eventType, fileName) => {
-        if (!isWatched) {
+        if (!isWatched && !fileName.includes("settings.json")) {
             isWatched = true;
             electron_1.app.relaunch();
             electron_1.app.exit();
@@ -37,40 +53,155 @@ electron_1.app.on('ready', () => {
     createWindow();
 });
 function createWindow() {
-    window = new electron_1.BrowserWindow({ width: 800, height: 600, webPreferences: {
+    top = new electron_1.BrowserWindow({ width: 800, height: 600, webPreferences: {
             nodeIntegration: false,
             contextIsolation: true,
             preload: path.join(__dirname, "preload.js")
         } });
     // hide the default menu bar that comes with the browser window
-    window.setMenuBarVisibility(true);
+    top.setMenuBarVisibility(true);
     // load a website to display
-    window.loadFile(path.join(__dirname, "index.html"));
-    window.webContents.openDevTools();
+    top.loadFile(path.join(__dirname, "index.html"));
+    top.webContents.openDevTools();
+    top.on("resize", () => {
+        resizeChildWindows();
+    });
+    top.on("enter-full-screen", () => {
+        if (reopenSettings) {
+            settings = openModalWindow("settings");
+            reopenSettings = false;
+        }
+    });
+    top.on("leave-full-screen", () => {
+        if (reopenSettings) {
+            settings = openModalWindow("settings");
+            reopenSettings = false;
+        }
+    });
+    applySettings();
 }
-let data = fs.readFileSync(path.join(__dirname, "game/script.json"), { encoding: "utf-8" });
-try {
-    let player = ScriptPlayer_1.ScriptPlayer.getInstance();
-    player.playable = JSON.parse(data);
-    console.log(player.playable);
+function resizeChildWindows() {
+    let width = top.getSize()[0] - 100;
+    let height = top.getSize()[1] - 100;
+    let children = top.getChildWindows();
+    for (let i = 0; i < children.length; i++) {
+        children[i].setSize(width, height);
+    }
+    /*if(settings != null && settings != undefined)
+      settings.setSize(width, height);
+    if(load != null && load != undefined)
+      load.setSize(width, height);
+    if(save != null && save != undefined)
+      save.setSize(width, height);*/
 }
-catch (exception) {
-    console.log(exception);
+function loadFiles() {
+    try {
+        let scriptPlayable = fs.readFileSync(path.join(__dirname, "game/script.json"), { encoding: "utf-8" });
+        player = JSON.parse(scriptPlayable);
+    }
+    catch (exception) {
+        console.log(exception);
+    }
+    try {
+        let scriptGameSettings = fs.readFileSync(path.join(__dirname, "game/settings.json"), { encoding: "utf-8" });
+        gameSettings = JSON.parse(scriptGameSettings);
+    }
+    catch (exception) {
+        console.log(exception);
+        gameSettings = defaultGameSettings;
+        saveSettings();
+    }
 }
+function saveSettings() {
+    fs.writeFileSync(path.join(__dirname, "game/settings.json"), JSON.stringify(gameSettings), { encoding: "utf-8" });
+}
+function applySettings() {
+    if (gameSettings.screen == "full" && !top.isFullScreen()
+        || gameSettings.screen != "full" && top.isFullScreen()) {
+        if (settings != null && settings != undefined) {
+            reopenSettings = true;
+            settings.close();
+        }
+        if (gameSettings.screen == "full")
+            top.fullScreen = true;
+        else
+            top.fullScreen = false;
+    }
+}
+function openModalWindow(type) {
+    var fileToLoad;
+    switch (type) {
+        case "settings": {
+            fileToLoad = "settings.html";
+            break;
+        }
+        case "load": {
+            fileToLoad = "load.html";
+            break;
+        }
+        case "save": {
+            fileToLoad = "save.html";
+            break;
+        }
+    }
+    var modalWin = new electron_1.BrowserWindow({ parent: top, modal: true, show: true, frame: false, resizable: false, webPreferences: {
+            nodeIntegration: false,
+            contextIsolation: true,
+            preload: path.join(__dirname, "preload.js")
+        } });
+    modalWin.webContents.openDevTools();
+    modalWin.loadFile(path.join(__dirname, fileToLoad));
+    modalWin.on("ready-to-show", () => {
+        resizeChildWindows();
+    });
+    return modalWin;
+}
+function closeChildrenWindows() {
+    var childs = top.getChildWindows();
+    for (let i = 0; i < childs.length; i++) {
+        childs[i].close();
+    }
+}
+//IPC MESSAGES
 electron_1.ipcMain.on("open", (event, args) => {
     switch (args) {
         case "start": {
-            window.loadFile(path.join(__dirname, "start.html"));
+            top.loadFile(path.join(__dirname, "start.html"));
             break;
         }
         case "title": {
-            window.loadFile(path.join(__dirname, "index.html"));
+            closeChildrenWindows();
+            top.loadFile(path.join(__dirname, "index.html"));
+            break;
+        }
+        case "settings": {
+            settings = openModalWindow("settings");
+            break;
+        }
+        case "load": {
+            load = openModalWindow("load");
+            break;
+        }
+        case "save": {
+            save = openModalWindow("save");
+            break;
         }
     }
 });
 electron_1.ipcMain.on("ask-playable", (event, arg) => {
-    event.returnValue = ScriptPlayer_1.ScriptPlayer.getInstance().playable;
+    event.returnValue = player;
 });
 electron_1.ipcMain.on("ask-dirname", (event, args) => {
     event.returnValue = __dirname;
+});
+electron_1.ipcMain.on("ask-settings", (event, args) => {
+    event.returnValue = gameSettings;
+});
+electron_1.ipcMain.on("set-settings", (event, args) => {
+    gameSettings = args;
+    top.webContents.send("settings-changed", gameSettings);
+    applySettings();
+});
+electron_1.ipcMain.on("save-settings", (event, args) => {
+    saveSettings();
 });

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="css/settings.css">
+    <meta charset="UTF-8">
+    <title>Hello World!</title>
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+</head>
+<body>
+    <div id="container" class="container">
+        <div class="containerTitle">
+            <h1>Settings</h1>
+        </div>
+        <div class="containerParams">
+            <div class="containerLeftParams">
+                <p class="SingleParam">Text Speed : </p>
+                <input class="SingleParam" type="range" min="0" max="10" value="5" id="sliderTextSpeed"> 
+                <p class="SingleParam">Skip Speed : </p>
+                <input class="SingleParam" type="range" min="0" max="10" value="5" id="sliderSkipSpeed"> 
+                <p class="SingleParam">Auto Speed : </p>
+                <input class="SingleParam" type="range" min="0" max="10" value="5" id="sliderAutoSpeed"> 
+                <p class="SingleParam">Text Opacity : </p>
+                <input class="SingleParam" type="range" min="0" max="100" value="50" id="sliderTextOpacity">
+                <p class="SingleParam">Screen : 
+                    <button id="buttonScreen">Full</button>
+                </p>
+
+            </div>
+            <div class="containerRightParams">
+                <p class="SingleParam">BGM Volume: </p>
+                <input class="SingleParam" type="range" min="0" max="100" value="50" id="sliderBGMVolume"> 
+                <p class="SingleParam">Voice Volume: </p>
+                <input class="SingleParam" type="range" min="0" max="100" value="50" id="sliderVoiceVolume"> 
+                <p class="SingleParam">Effect Volume: </p>
+                <input class="SingleParam" type="range" min="0" max="100" value="50" id="sliderEffectVolume">
+            </div>
+        </div>
+        <div class="containerButtons">
+            <button id="buttonReturn">Return</button>
+        </div>
+    </div>
+</body>
+<script src="settings.js"></script>
+</html>
