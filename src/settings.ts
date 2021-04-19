@@ -13,12 +13,12 @@ var isFull = false;
 var settings = window.api.sendSync("ask-settings");
 
 function applySettings(){
-    sliderTextSpeed.value = settings.textSpeed;
-    sliderSkipSpeed.value = settings.skipSpeed;
-    sliderAutoSpeed.value = settings.autoSpeed;
+    sliderTextSpeed.value = 10 - settings.textSpeed;
+    sliderSkipSpeed.value = 10 - settings.skipSpeed;
+    sliderAutoSpeed.value = 10 - settings.autoSpeed;
     sliderTextOpacity.value = settings.textOpacity;
     sliderBGMVolume.value = settings.bgmVolume;
-    sliderVoiceVolume.value = settings.voiceAudio;
+    sliderVoiceVolume.value = settings.voiceVolume;
     sliderEffectVolume.value = settings.effectVolume;
     if(settings.screen == "full"){
         buttonScreen.innerText = "Window";
@@ -33,12 +33,12 @@ function applySettings(){
 applySettings();
 
 function updateSettings(){
-    settings.textSpeed = sliderTextSpeed.value;
-    settings.skipSpeed = sliderSkipSpeed.value;
-    settings.autoSpeed = sliderAutoSpeed.value;
+    settings.textSpeed = 10 - sliderTextSpeed.value;
+    settings.skipSpeed = 10 - sliderSkipSpeed.value;
+    settings.autoSpeed = 10 - sliderAutoSpeed.value;
     settings.textOpacity = sliderTextOpacity.value;
     settings.bgmVolume = sliderBGMVolume.value;
-    settings.voiceAudio = sliderVoiceVolume.value;
+    settings.voiceVolume = sliderVoiceVolume.value;
     settings.effectVolume = sliderEffectVolume.value;
     if(isFull){
         settings.screen = "full";
@@ -71,5 +71,4 @@ buttonScreen.addEventListener("click", (ev:Event)=>{
 
 buttonReturn.addEventListener("click", (ev:Event)=>{
     window.api.send("save-settings");
-    window.api.send("open", "title");
 });

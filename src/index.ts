@@ -10,8 +10,8 @@ var isWatched = false;
 var player;
 const defaultGameSettings = {
   "textSpeed":"5",
-  "textSkipSpeed":"5",
-  "textAutoSpeed":"5",
+  "skipSpeed":"5",
+  "autoSpeed":"5",
   "textOpacity":"50",
   "screen":"window",
   "bgmVolume":"80",
@@ -220,4 +220,5 @@ ipcMain.on("set-settings", (event, args)=>{
 
 ipcMain.on("save-settings", (event, args)=>{
   saveSettings();
+  closeChildrenWindows();
 });
