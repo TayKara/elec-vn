@@ -20,6 +20,7 @@ const defaultGameSettings = {
 };
 var gameSettings;
 var reopenSettings = false;
+var currentPlayable = 0;
 
 loadFiles();
 
@@ -146,6 +147,9 @@ function openModalWindow(type){
       fileToLoad = "save.html";
       break;
     }
+    case "log":{
+      fileToLoad = "log.html";
+    }
   }
 
   var modalWin = new BrowserWindow({parent:top, modal:true, show:true, frame:false, resizable:false, webPreferences:{
@@ -197,11 +201,23 @@ ipcMain.on("open", (event, args)=>{
       save = openModalWindow("save");
       break;
     }
+    case "log":{
+      save = openModalWindow("log");
+      break;
+    }
   }
+});
+
+ipcMain.on("close-children", (event, args)=>{
+  closeChildrenWindows();
 });
 
 ipcMain.on("ask-playable", (event, arg)=>{
   event.returnValue = player;
+});
+
+ipcMain.on("ask-current-playable", (event, arg)=>{
+  event.returnValue = currentPlayable;
 });
 
 ipcMain.on("ask-dirname", (event, args)=>{
@@ -221,4 +237,10 @@ ipcMain.on("set-settings", (event, args)=>{
 ipcMain.on("save-settings", (event, args)=>{
   saveSettings();
   closeChildrenWindows();
+});
+
+ipcMain.on("set-current-playable", (event, args)=>{
+  currentPlayable = args;
+  console.log(args);
+  console.log(currentPlayable);
 });

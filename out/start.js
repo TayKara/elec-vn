@@ -44,8 +44,7 @@ buttonAuto?.addEventListener("click", (ev) => {
         playNext();
 });
 buttonLog?.addEventListener("click", (ev) => {
-    console.log("log");
-    console.log(ev);
+    window.api.send("open", "log");
 });
 buttonSave?.addEventListener("click", (ev) => {
     console.log("save");
@@ -91,6 +90,7 @@ function preloadImages(nbImgToLoad) {
 function playNext() {
     if (isPreviousTextWritten) {
         currentPlayable++;
+        window.api.send("set-current-playable", currentPlayable);
         audioVoice.pause();
         if (currentPlayable < playable.play.length) {
             let current = playable.play[currentPlayable];
@@ -136,7 +136,7 @@ function writeText(text, textSpeed) {
     if (textSpeed != 0) {
         isPreviousTextWritten = false;
         intervalWriteText = setInterval(() => {
-            if (i < text.length) {
+            if (i <= text.length) {
                 containerText.innerText = text.substring(0, i);
                 i++;
             }

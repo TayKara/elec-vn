@@ -40,6 +40,7 @@ const defaultGameSettings = {
 };
 var gameSettings;
 var reopenSettings = false;
+var currentPlayable = 0;
 loadFiles();
 electron_1.app.on('ready', () => {
     // once electron has started up, create a window.
@@ -143,6 +144,9 @@ function openModalWindow(type) {
             fileToLoad = "save.html";
             break;
         }
+        case "log": {
+            fileToLoad = "log.html";
+        }
     }
     var modalWin = new electron_1.BrowserWindow({ parent: top, modal: true, show: true, frame: false, resizable: false, webPreferences: {
             nodeIntegration: false,
@@ -186,10 +190,20 @@ electron_1.ipcMain.on("open", (event, args) => {
             save = openModalWindow("save");
             break;
         }
+        case "log": {
+            save = openModalWindow("log");
+            break;
+        }
     }
+});
+electron_1.ipcMain.on("close-children", (event, args) => {
+    closeChildrenWindows();
 });
 electron_1.ipcMain.on("ask-playable", (event, arg) => {
     event.returnValue = player;
+});
+electron_1.ipcMain.on("ask-current-playable", (event, arg) => {
+    event.returnValue = currentPlayable;
 });
 electron_1.ipcMain.on("ask-dirname", (event, args) => {
     event.returnValue = __dirname;
@@ -205,4 +219,9 @@ electron_1.ipcMain.on("set-settings", (event, args) => {
 electron_1.ipcMain.on("save-settings", (event, args) => {
     saveSettings();
     closeChildrenWindows();
+});
+electron_1.ipcMain.on("set-current-playable", (event, args) => {
+    currentPlayable = args;
+    console.log(args);
+    console.log(currentPlayable);
 });

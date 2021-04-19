@@ -28,7 +28,7 @@
     margin-top:5%;
 }
 
-.containerParams{
+.containerLogs{
     border: solid 1px black;
     background-color: rgba(184, 184, 184, 0.5);
     grid-column-start: 1;
@@ -40,10 +40,9 @@
     height: 70%;
     margin-top:10%;
     margin-bottom: 10%;
-    display: grid;
-    grid-template-columns: 50% 50%;
-    grid-template-rows: 100%;
-    justify-items: center;
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
 }
 
 .containerButtons{
@@ -56,29 +55,9 @@
     margin-bottom:5%;
 }
 
-.containerLeftParams{
-    width: 90%;
-    grid-column-start: 1;
-    grid-column-end: 1;
-    grid-row-start: 1;
-    grid-row-end: 1;
-    display: grid;
-    grid-template-columns: 100%;
-    grid-template-rows: repeat(12, 10%);
-    justify-items: center;
-}
-
-.containerRightParams{
-    width: 90%;
-    grid-column-start: 2;
-    grid-column-end: 2;
-    grid-row-start: 1;
-    grid-row-end: 1;
-    display: grid;
-    grid-template-columns: 100%;
-    grid-template-rows: repeat(12, 10%);
-    justify-items: center;
-
+.logItem{
+    font-size: 1em;
+    padding: 10px;
 }
 
 p{
@@ -89,4 +68,15 @@ p{
 h1{
     color: white;
     text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+
+nav ul{
+    height:100%; 
+    width:100%;
+    overflow:hidden; 
+    overflow-y:scroll;
+}
+nav ul li{
+    height:10%;
+    width:100%;
 }
