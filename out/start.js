@@ -45,17 +45,22 @@ buttonAuto?.addEventListener("click", (ev) => {
 });
 buttonLog?.addEventListener("click", (ev) => {
     window.api.send("open", "log");
+    setNormalState();
 });
 buttonSave?.addEventListener("click", (ev) => {
     window.api.send("open", "save");
+    setNormalState();
 });
 buttonLoad?.addEventListener("click", (ev) => {
     window.api.send("open", "load");
+    setNormalState();
 });
 buttonSettings?.addEventListener("click", (ev) => {
     window.api.send("open", "settings");
+    setNormalState();
 });
 buttonTitle?.addEventListener("click", (ev) => {
+    setNormalState();
     window.api.send("open", "title");
 });
 playable = window.api.sendSync("ask-playable");
@@ -65,6 +70,11 @@ applySettings();
 window.api.receive("settings-changed", (args) => {
     settings = args;
     applySettings();
+});
+window.api.receive("playable-loaded", (args) => {
+    setNormalState();
+    currentPlayable = args - 1;
+    playNext();
 });
 preloadImages(MAX_LOADED_IMAGE);
 playNext();

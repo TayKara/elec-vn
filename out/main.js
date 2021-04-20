@@ -230,6 +230,9 @@ electron_1.ipcMain.on("set-settings", (event, args) => {
 electron_1.ipcMain.on("save-settings", (event, args) => {
     saveSettings();
 });
+electron_1.ipcMain.on("load-playable", (event, args) => {
+    top.webContents.send("playable-loaded", args);
+});
 electron_1.ipcMain.on("set-current-playable", (event, args) => {
     currentPlayable = args;
 });

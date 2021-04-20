@@ -251,6 +251,10 @@ ipcMain.on("save-settings", (event, args)=>{
   saveSettings();
 });
 
+ipcMain.on("load-playable", (event, args)=>{
+  top.webContents.send("playable-loaded", args);
+})
+
 ipcMain.on("set-current-playable", (event, args)=>{
   currentPlayable = args;
 });
