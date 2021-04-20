@@ -218,8 +218,11 @@ electron_1.ipcMain.on("set-settings", (event, args) => {
 });
 electron_1.ipcMain.on("save-settings", (event, args) => {
     saveSettings();
-    closeChildrenWindows();
 });
 electron_1.ipcMain.on("set-current-playable", (event, args) => {
     currentPlayable = args;
+});
+electron_1.ipcMain.on("quit", (event, args) => {
+    closeChildrenWindows();
+    top.close();
 });

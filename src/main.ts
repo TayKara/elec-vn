@@ -95,8 +95,7 @@ function resizeChildWindows(){
 function loadFiles(){
   try{
     let scriptPlayable = fs.readFileSync(path.join(__dirname, "game/script.json"), {encoding:"utf-8"});
-    
-      player = JSON.parse(scriptPlayable);
+    player = JSON.parse(scriptPlayable);
     
     }catch(exception){
       console.log(exception);
@@ -236,9 +235,13 @@ ipcMain.on("set-settings", (event, args)=>{
 
 ipcMain.on("save-settings", (event, args)=>{
   saveSettings();
-  closeChildrenWindows();
 });
 
 ipcMain.on("set-current-playable", (event, args)=>{
   currentPlayable = args;
+});
+
+ipcMain.on("quit", (event, args)=>{
+  closeChildrenWindows();
+  top.close();
 });

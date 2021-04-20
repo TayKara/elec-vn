@@ -63,4 +63,5 @@ buttonScreen.addEventListener("click", (ev) => {
 });
 buttonReturn.addEventListener("click", (ev) => {
     window.api.send("save-settings");
+    window.api.send("close-children");
 });

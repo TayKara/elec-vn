@@ -25,7 +25,7 @@ document.getElementById("buttonSettings")
 
 document.getElementById("buttonQuit")
     ?.addEventListener("click", (ev:Event) => {
-        console.log(ev);
+        window.api.send("quit");
     });
 
 function openWindow(message: string){
