@@ -5,7 +5,7 @@ document.getElementById("buttonStart")
 
 document.getElementById("buttonLoad")
     ?.addEventListener("click", (ev:Event) => {
-        console.log(ev);
+        openWindow("load");
     });
     
 document.getElementById("buttonCG")

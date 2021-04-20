@@ -4,7 +4,7 @@ document.getElementById("buttonStart")
 });
 document.getElementById("buttonLoad")
     ?.addEventListener("click", (ev) => {
-    console.log(ev);
+    openWindow("load");
 });
 document.getElementById("buttonCG")
     ?.addEventListener("click", (ev) => {

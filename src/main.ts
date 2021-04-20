@@ -19,6 +19,8 @@ const defaultGameSettings = {
   "effectVolume":"80"
 };
 var gameSettings;
+const defaultGameSaves = [];
+var gameSaves;
 var reopenSettings = false;
 var currentPlayable = 0;
 
@@ -27,7 +29,7 @@ loadFiles();
 app.on('ready', () => {
   // once electron has started up, create a window.
   fs.watch(path.join(__dirname), {recursive:true} , (eventType, fileName)=>{
-      if(!isWatched && !fileName.includes("settings.json")){
+      if(!isWatched && !fileName.includes("game")){
         isWatched = true;
         app.relaunch();
         app.exit();
@@ -83,12 +85,6 @@ function resizeChildWindows(){
   for(let i=0; i<children.length; i++){
     children[i].setSize(width, height);
   }
-  /*if(settings != null && settings != undefined)
-    settings.setSize(width, height);
-  if(load != null && load != undefined)
-    load.setSize(width, height);
-  if(save != null && save != undefined)
-    save.setSize(width, height);*/
 
 }
 
@@ -97,23 +93,37 @@ function loadFiles(){
     let scriptPlayable = fs.readFileSync(path.join(__dirname, "game/script.json"), {encoding:"utf-8"});
     player = JSON.parse(scriptPlayable);
     
-    }catch(exception){
-      console.log(exception);
-    
-    }
-    try{
-      let scriptGameSettings = fs.readFileSync(path.join(__dirname, "game/settings.json"), {encoding:"utf-8"});
-    
-      gameSettings = JSON.parse(scriptGameSettings);
-    }catch(exception){
-      console.log(exception);
-      gameSettings = defaultGameSettings;
-      saveSettings();
-    }
+  }catch(exception){
+    console.log(exception);
+  
+  }
+
+  try{
+    let scriptGameSettings = fs.readFileSync(path.join(__dirname, "game/settings.json"), {encoding:"utf-8"});
+  
+    gameSettings = JSON.parse(scriptGameSettings);
+  }catch(exception){
+    console.log(exception);
+    gameSettings = defaultGameSettings;
+    saveSettings();
+  }
+
+  try{
+    let savesPresent = fs.readFileSync(path.join(__dirname, "game/saves.json"), {encoding:"utf-8"});
+    gameSaves = JSON.parse(savesPresent);
+  }catch(exception){
+    console.log(exception);
+    gameSaves = defaultGameSaves;
+    saveGameSaves();
+  }
 }
 
 function saveSettings(){
-  fs.writeFileSync(path.join(__dirname, "game/settings.json"), JSON.stringify(gameSettings), {encoding:"utf-8"});
+  fs.writeFile(path.join(__dirname, "game/settings.json"), JSON.stringify(gameSettings), ()=>{});
+}
+
+function saveGameSaves(){
+  fs.writeFile(path.join(__dirname, "game/saves.json"), JSON.stringify(gameSaves), ()=>{});
 }
 
 function applySettings(){
@@ -160,7 +170,7 @@ function openModalWindow(type){
   modalWin.loadFile(path.join(__dirname, fileToLoad));
   modalWin.on("ready-to-show", ()=>{
     resizeChildWindows();
-  })
+  });
 
   return modalWin;
 
@@ -227,6 +237,10 @@ ipcMain.on("ask-settings", (event, args)=>{
   event.returnValue = gameSettings;
 });
 
+ipcMain.on("ask-saves", (event, args)=>{
+  event.returnValue = gameSaves;
+});
+
 ipcMain.on("set-settings", (event, args)=>{
   gameSettings = args;
   top.webContents.send("settings-changed", gameSettings);
@@ -240,6 +254,12 @@ ipcMain.on("save-settings", (event, args)=>{
 ipcMain.on("set-current-playable", (event, args)=>{
   currentPlayable = args;
 });
+
+ipcMain.on("set-game-saves", (event, args)=>{
+  gameSaves = args;
+  console.log(gameSaves);
+  saveGameSaves();
+})
 
 ipcMain.on("quit", (event, args)=>{
   closeChildrenWindows();

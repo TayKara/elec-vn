@@ -47,12 +47,10 @@ buttonLog?.addEventListener("click", (ev) => {
     window.api.send("open", "log");
 });
 buttonSave?.addEventListener("click", (ev) => {
-    console.log("save");
-    console.log(ev);
+    window.api.send("open", "save");
 });
 buttonLoad?.addEventListener("click", (ev) => {
-    console.log("load");
-    console.log(ev);
+    window.api.send("open", "load");
 });
 buttonSettings?.addEventListener("click", (ev) => {
     window.api.send("open", "settings");
