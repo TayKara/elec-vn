@@ -15,7 +15,7 @@ function addButtons(nbButtons){
     for(let i=0; i < nbButtons; i++){
         let button = document.createElement("button");
         button.setAttribute("class", "logItem");
-        let current = playable.play[i];
+        let current = playable[i];
         if(current.audioVoice != null && current.audioVoice != undefined){
             button.addEventListener("click", ()=>{
                 audio.setAttribute("src", dirname+"/game/sound/"+current.audioVoice);

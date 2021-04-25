@@ -44,6 +44,7 @@ buttonAuto?.addEventListener("click", (ev) => {
         playNext();
 });
 buttonLog?.addEventListener("click", (ev) => {
+    console.log("open log");
     window.api.send("open", "log");
     setNormalState();
 });
@@ -79,8 +80,8 @@ window.api.receive("playable-loaded", (args) => {
 preloadImages(MAX_LOADED_IMAGE);
 playNext();
 function preloadImages(nbImgToLoad) {
-    for (let i = 0; alreadyPreloadedPlayable < playable.play.length && i < nbImgToLoad; i++) {
-        let current = playable.play[alreadyPreloadedPlayable];
+    for (let i = 0; alreadyPreloadedPlayable < playable.length && i < nbImgToLoad; i++) {
+        let current = playable[alreadyPreloadedPlayable];
         alreadyPreloadedPlayable++;
         if (current.image != null && current.image != undefined) {
             if (preloadImgs[preloadImgPos] != null || preloadImgs[preloadImgPos] != undefined) {
@@ -100,8 +101,8 @@ function playNext() {
         currentPlayable++;
         window.api.send("set-current-playable", currentPlayable);
         audioVoice.pause();
-        if (currentPlayable < playable.play.length) {
-            let current = playable.play[currentPlayable];
+        if (currentPlayable < playable.length) {
+            let current = playable[currentPlayable];
             if (current.text != null && current.text != undefined) {
                 writeText(current.text, settings.textSpeed);
             }
@@ -133,7 +134,7 @@ function playNext() {
     }
     else {
         clearInterval(intervalWriteText);
-        let current = playable.play[currentPlayable];
+        let current = playable[currentPlayable];
         if (current.text != undefined && current.text != null)
             writeText(current.text, 0);
     }
@@ -164,7 +165,7 @@ function autoPlay() {
     console.log(isAutoEnabled);
     setTimeout(() => {
         if (isAutoEnabled) {
-            let current = playable.play[currentPlayable];
+            let current = playable[currentPlayable];
             if (current.audioVoice != null && current.audioVoice != undefined) {
                 let timeout = audioVoice.duration - audioVoice.currentTime;
                 if (timeout < 0)

@@ -10,12 +10,12 @@ document.getElementById("buttonLoad")
     
 document.getElementById("buttonCG")
     ?.addEventListener("click", (ev:Event) => {
-        console.log(ev);
+        openWindow("cg");
     });
 
 document.getElementById("buttonScene")
     ?.addEventListener("click", (ev:Event) => {
-        console.log(ev);
+        openWindow("scene");
     });
 
 document.getElementById("buttonSettings")

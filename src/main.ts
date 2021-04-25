@@ -1,11 +1,21 @@
 import { app, BrowserWindow, ipcMain, webContents } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
+import { PlayableGenerator } from './PlayableGenerator';
+
+const STATE_SCENE = "SCENE";
+const STATE_CG = "CG";
+const STATE_PLAY = "PLAY";
+const STATE_LOAD = "LOAD";
+const STATE_INIT = "INIT";
 
 var top: BrowserWindow;
 var settings : BrowserWindow;
 var load : BrowserWindow;
 var save : BrowserWindow;
+var log : BrowserWindow;
+var scene : BrowserWindow;
+var cg : BrowserWindow;
 var isWatched = false;
 var player;
 const defaultGameSettings = {
@@ -21,8 +31,18 @@ const defaultGameSettings = {
 var gameSettings;
 const defaultGameSaves = [];
 var gameSaves;
+const defaultGameScenes = [];
+var gameScenes;
+const defaultGameCGs = [];
+var gameCGs;
 var reopenSettings = false;
 var currentPlayable = 0;
+var currentScene = -1;
+var currentScenePlayable;
+var currentCG = -1;
+var currentCGPlayable;
+var currentLoadPlayable;
+var currentState = STATE_INIT;
 
 loadFiles();
 
@@ -95,7 +115,7 @@ function loadFiles(){
     
   }catch(exception){
     console.log(exception);
-  
+    
   }
 
   try{
@@ -116,6 +136,24 @@ function loadFiles(){
     gameSaves = defaultGameSaves;
     saveGameSaves();
   }
+
+  try{
+    let scenesFile = fs.readFileSync(path.join(__dirname, "game/scenes.json"), {encoding:"utf-8"});
+    gameScenes = JSON.parse(scenesFile);
+  }catch(exception){
+    console.log(exception);
+    gameScenes = defaultGameScenes;
+    saveGameScenes();
+  }
+
+  try{
+    let cgsFile = fs.readFileSync(path.join(__dirname, "game/cgs.json"), {encoding:"utf-8"});
+    gameCGs = JSON.parse(cgsFile);
+  }catch(exception){
+    console.log(exception);
+    gameCGs = defaultGameCGs;
+    saveGameCGs();
+  }
 }
 
 function saveSettings(){
@@ -124,6 +162,14 @@ function saveSettings(){
 
 function saveGameSaves(){
   fs.writeFile(path.join(__dirname, "game/saves.json"), JSON.stringify(gameSaves), ()=>{});
+}
+
+function saveGameScenes(){
+  fs.writeFile(path.join(__dirname, "game/scenes.json"), JSON.stringify(gameScenes), ()=>{});
+}
+
+function saveGameCGs(){
+  fs.writeFile(path.join(__dirname, "game/cgs.json"), JSON.stringify(gameCGs), ()=>{});
 }
 
 function applySettings(){
@@ -158,6 +204,14 @@ function openModalWindow(type){
     }
     case "log":{
       fileToLoad = "log.html";
+      break;
+    }
+    case "scene":{
+      fileToLoad = "scene.html";
+      break;
+    }
+    case "cg":{
+      fileToLoad = "cg.html";
     }
   }
 
@@ -184,6 +238,30 @@ function closeChildrenWindows(){
   }
 }
 
+function reopenPreviousState(){
+  switch(currentState){
+    case STATE_SCENE:{
+      scene = openModalWindow("scene");
+      break;
+    }
+    case STATE_CG:{
+      cg = openModalWindow("cg");
+      break;
+    }
+    case STATE_PLAY:{
+      break;
+    }
+    case STATE_INIT:{
+      break;
+    }
+    case STATE_LOAD:{
+      break;
+    }
+  }
+
+  currentState = STATE_INIT;
+}
+
 
 //IPC MESSAGES
 
@@ -195,6 +273,7 @@ ipcMain.on("open", (event, args)=>{
     }
     case "title":{
       closeChildrenWindows();
+      reopenPreviousState();
       top.loadFile(path.join(__dirname, "index.html"));
       break;
     }
@@ -211,7 +290,15 @@ ipcMain.on("open", (event, args)=>{
       break;
     }
     case "log":{
-      save = openModalWindow("log");
+      log = openModalWindow("log");
+      break;
+    }
+    case "scene":{
+      scene = openModalWindow("scene");
+      break;
+    }
+    case "cg":{
+      cg = openModalWindow("cg");
       break;
     }
   }
@@ -222,7 +309,18 @@ ipcMain.on("close-children", (event, args)=>{
 });
 
 ipcMain.on("ask-playable", (event, arg)=>{
-  event.returnValue = player;
+  if(currentState == STATE_SCENE){
+    event.returnValue = currentScenePlayable;
+  }
+  else if(currentState == STATE_CG){
+    event.returnValue = currentCGPlayable;
+  }
+  else if(currentState == STATE_LOAD){
+    event.returnValue = currentLoadPlayable;
+  }
+  else{
+    event.returnValue = player;
+  }
 });
 
 ipcMain.on("ask-current-playable", (event, arg)=>{
@@ -241,6 +339,24 @@ ipcMain.on("ask-saves", (event, args)=>{
   event.returnValue = gameSaves;
 });
 
+ipcMain.on("ask-scenes", (event, args)=>{
+  event.returnValue = gameScenes;
+});
+
+ipcMain.on("ask-cgs", (event, args)=>{
+  event.returnValue = gameCGs;
+});
+
+ipcMain.on("ask-current-scene", (event, args)=>{
+  event.returnValue = currentScene;
+  currentScene = -1;
+});
+
+ipcMain.on("ask-current-cg", (event, args)=>{
+  event.returnValue = currentCG;
+  currentCG = -1;
+});
+
 ipcMain.on("set-settings", (event, args)=>{
   gameSettings = args;
   top.webContents.send("settings-changed", gameSettings);
@@ -252,7 +368,9 @@ ipcMain.on("save-settings", (event, args)=>{
 });
 
 ipcMain.on("load-playable", (event, args)=>{
-  top.webContents.send("playable-loaded", args);
+  currentState = STATE_LOAD;
+  currentLoadPlayable = PlayableGenerator.getPlayableByLoad(player, args);
+  top.loadFile(path.join(__dirname, "start.html"));
 })
 
 ipcMain.on("set-current-playable", (event, args)=>{
@@ -263,7 +381,27 @@ ipcMain.on("set-game-saves", (event, args)=>{
   gameSaves = args;
   console.log(gameSaves);
   saveGameSaves();
-})
+});
+
+ipcMain.on("start-scene", (event, args)=>{
+  if(!isNaN(args)){
+    currentState = STATE_SCENE;
+    currentScenePlayable = PlayableGenerator.getPlayableByScenes(player, gameScenes[args]);
+    currentScene = args;
+    closeChildrenWindows();
+    top.loadFile(path.join(__dirname, "start.html"));
+  }
+});
+
+ipcMain.on("start-cg", (event, args)=>{
+  if(!isNaN(args)){
+    currentState = STATE_CG;
+    currentCGPlayable = PlayableGenerator.getPlayableByCGs(player, gameCGs[args]);
+    currentCG = args;
+    closeChildrenWindows();
+    top.loadFile(path.join(__dirname, "startcg.html"));
+  }
+});
 
 ipcMain.on("quit", (event, args)=>{
   closeChildrenWindows();
