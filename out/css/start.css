@@ -17,8 +17,8 @@ body{
     background-position: center;
     background-size:contain;
     display: flex;
-    flex-direction: column-reverse;
     align-items: center;
+    justify-content: center;
 }
 
 .containerBottom{
@@ -27,9 +27,28 @@ body{
     width: 70%;
     height: 30%;
     display: flex;
+    align-self: flex-end;
     flex-direction: column-reverse;
     align-items: center;
 }
+
+.containerChoices{
+    position:absolute;
+    width: 50%;
+    display: flex;
+    align-self:center;
+    justify-self: center;
+    flex-direction: column;
+}
+
+.containerChoices *{
+    margin: 5px;
+}
+
+.buttonChoices{
+    font-size: 1em;
+}
+
 ul {
     list-style-type:none;
     margin: 0;

@@ -8,6 +8,7 @@ var audioBGM = document.getElementById("audioBGM");
 var audioVoice = document.getElementById("audioVoice");
 var audioEffect = document.getElementById("audioEffect");
 var divImages = document.getElementById("preloadImages");
+var containerChoices = document.getElementById("containerChoices");
 
 var buttonSkip = document.getElementById("buttonSkip");
 var buttonAuto = document.getElementById("buttonAuto");
@@ -17,10 +18,15 @@ var buttonLoad = document.getElementById("buttonLoad");
 var buttonSettings = document.getElementById("buttonSettings");
 var buttonTitle = document.getElementById("buttonTitle");
 
+const MAX_LOADED_IMAGE = 20;
+const TYPE_PLAYABLE = "playable";
+const TYPE_CHOICE = "choice";
+const TYPE_END = "end";
+const TYPE_GOTO = "goto";
+
 var preloadImgs = new Array();
 var preloadImgPos = 0;
 var alreadyPreloadedPlayable = 0;
-const MAX_LOADED_IMAGE = 20;
 var intervalWriteText;
 var intervalSkip;
 var isPreviousTextWritten = true;
@@ -29,7 +35,7 @@ var isAutoEnabled = false;
 
 
 container?.addEventListener("click", (ev:Event) => {
-    if(ev.target == container || ev.target == containerText){
+    if((ev.target == container || ev.target == containerText) && !(containerChoices.firstChild)){
         setNormalState();
         playNext();
     }
@@ -117,34 +123,26 @@ function playNext(){
         if(currentPlayable < playable.length){
 
             let current = playable[currentPlayable];
-
-            if(current.text != null && current.text != undefined){
-                writeText(current.text, settings.textSpeed);
+            let type = "";
+            if(current.type != null && current.type != undefined)
+                type = current.type;
+            if(type == TYPE_CHOICE){
+                playChoice(current);
             }
-            if(current.image != null && current.image != undefined){
-                container.style.backgroundImage = "url('"+dirname + "/game/image/" + current.image+"')";
-                preloadImages(1);
+            else if(type == TYPE_GOTO){
+                if(current.goto)
+                    goTo(current.goto);
             }
-            if(current.audioBGM != null && current.audioBGM != undefined){
-                audioBGM.setAttribute("src", dirname + "/game/sound/" + current.audioBGM);
-                audioBGM.play();
+            else if(type == TYPE_END){
+                playEnd();
             }
-            if(current.audioEffect != null && current.audioEffect != undefined){
-                audioEffect.setAttribute("src", dirname + "/game/sound/" + current.audioEffect);
-                audioEffect.play();
-            }
-            if(current.audioVoice != null && current.audioVoice != undefined){
-                audioVoice.setAttribute("src", dirname + "/game/sound/" + current.audioVoice);
-                audioVoice.play();
-                audioVoice.removeEventListener("play", autoPlay);
-                audioVoice.addEventListener("play", autoPlay);
-            }else{
-                autoPlay();
+            else{
+                playPlayable(current);
             }
 
         }
         else{
-            window.api.send("open", "title");
+            playEnd();
         }
     }else{
         clearInterval(intervalWriteText);
@@ -152,6 +150,64 @@ function playNext(){
         if(current.text != undefined && current.text != null)
             writeText(current.text, 0);
     }
+}
+
+function playChoice(current){
+
+    for(let i=0; i < current.choices.length; i++){
+        let buttonChoice = document.createElement("button");
+        buttonChoice.setAttribute("class", "buttonChoices");
+        buttonChoice.innerText = current.choices[i].text;
+        let id = current.choices[i].goto;
+        buttonChoice.addEventListener("click", (ev)=>{
+            while(containerChoices.firstChild){
+                containerChoices.removeChild(containerChoices.firstChild);
+            }
+            goTo(id);
+        });
+        containerChoices.appendChild(buttonChoice);
+    }
+}
+
+function playPlayable(current){
+    if(current.text != null && current.text != undefined){
+        writeText(current.text, settings.textSpeed);
+    }
+    if(current.image != null && current.image != undefined){
+        container.style.backgroundImage = "url('"+dirname + "/game/image/" + current.image+"')";
+        preloadImages(1);
+    }
+    if(current.audioBGM != null && current.audioBGM != undefined){
+        audioBGM.setAttribute("src", dirname + "/game/sound/" + current.audioBGM);
+        audioBGM.play();
+    }
+    if(current.audioEffect != null && current.audioEffect != undefined){
+        audioEffect.setAttribute("src", dirname + "/game/sound/" + current.audioEffect);
+        audioEffect.play();
+    }
+    if(current.audioVoice != null && current.audioVoice != undefined){
+        audioVoice.setAttribute("src", dirname + "/game/sound/" + current.audioVoice);
+        audioVoice.play();
+        audioVoice.removeEventListener("play", autoPlay);
+        audioVoice.addEventListener("play", autoPlay);
+    }else{
+        autoPlay();
+    }
+}
+
+function playEnd(){
+    window.api.send("open", "title");
+}
+
+function goTo(id){
+
+    for(let i=0; i < playable.length; i++){
+        if(playable[i].id == id){
+            currentPlayable = --i;
+            break;
+        }
+    }
+    playNext();
 }
 
 function writeText(text : string, textSpeed){
