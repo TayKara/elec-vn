@@ -2,7 +2,8 @@ var playable : JSON;
 var dirname : string;
 var settings : JSON;
 var currentPlayable = -1;
-var container = document.getElementById("container");
+var backgroundImageFront = document.getElementById("backgroundImageFront");
+var backgroundImageRear = document.getElementById("backgroundImageRear");
 var containerText = document.getElementById("containerText");
 var audioBGM = document.getElementById("audioBGM");
 var audioVoice = document.getElementById("audioVoice");
@@ -32,10 +33,12 @@ var intervalSkip;
 var isPreviousTextWritten = true;
 var isSkipEnabled = false;
 var isAutoEnabled = false;
+var isRearBackgroundShown = false;
+var idIntervalSwitchBackground;
 
 
-container?.addEventListener("click", (ev:Event) => {
-    if((ev.target == container || ev.target == containerText) && !(containerChoices.firstChild)){
+backgroundImageFront?.addEventListener("click", (ev:Event) => {
+    if((ev.target == backgroundImageFront || ev.target == containerText) && !(containerChoices.firstChild)){
         setNormalState();
         playNext();
     }
@@ -109,6 +112,13 @@ function preloadImages(nbImgToLoad){
             preloadImgs[preloadImgPos].src = dirname + "/game/image/" + current.image;
             divImages.appendChild(preloadImgs[preloadImgPos]);
             preloadImgPos++;
+            if(current.image2 != null && current.image2 != undefined){
+                
+                preloadImgs[preloadImgPos] = new Image();
+                preloadImgs[preloadImgPos].src = dirname + "/game/image/" + current.image;
+                divImages.appendChild(preloadImgs[preloadImgPos]);
+                preloadImgPos++;
+            }
             if(preloadImgPos >= MAX_LOADED_IMAGE)
                 preloadImgPos = 0;
         }
@@ -116,6 +126,9 @@ function preloadImages(nbImgToLoad){
 }
 
 function playNext(){
+    clearInterval(idIntervalSwitchBackground);
+    backgroundImageFront.style.opacity = "1";
+    backgroundImageRear.style.opacity = "0";
     if(isPreviousTextWritten){
         currentPlayable++;
         window.api.send("set-current-playable", currentPlayable);
@@ -174,8 +187,15 @@ function playPlayable(current){
         writeText(current.text, settings.textSpeed);
     }
     if(current.image != null && current.image != undefined){
-        container.style.backgroundImage = "url('"+dirname + "/game/image/" + current.image+"')";
+        backgroundImageFront.style.backgroundImage = "url('"+dirname + "/game/image/" + current.image+"')";
         preloadImages(1);
+    }
+    if(current.image2 != null && current.image2 != undefined){
+        backgroundImageRear.style.backgroundImage = "url('"+dirname + "/game/image/" + current.image2+"')";
+        preloadImages(1);
+        idIntervalSwitchBackground = setInterval(()=>{
+            switchBackround();
+        },1000);
     }
     if(current.audioBGM != null && current.audioBGM != undefined){
         audioBGM.setAttribute("src", dirname + "/game/sound/" + current.audioBGM);
@@ -193,6 +213,27 @@ function playPlayable(current){
     }else{
         autoPlay();
     }
+}
+
+function switchBackround(){
+    let opacityBackground = 0;
+    let idSwitch = setInterval(()=>{
+        console.log("dans l'interval "+opacityBackground);
+        opacityBackground = opacityBackground + 0.1;
+        if(!isRearBackgroundShown){
+            backgroundImageFront.style.opacity = (1 - opacityBackground) + "";
+            backgroundImageRear.style.opacity = (opacityBackground) + "";
+        }else{
+            backgroundImageRear.style.opacity = (1 - opacityBackground) + "";
+            backgroundImageFront.style.opacity = (opacityBackground) + "";
+
+        }
+        if(opacityBackground >= 1){
+            isRearBackgroundShown = !isRearBackgroundShown;
+            clearInterval(idSwitch);
+            opacityBackground = 0;
+        }
+    }, 50);
 }
 
 function playEnd(){
