@@ -49,6 +49,8 @@ function addButton() {
 }
 function newSave(button, position) {
     let text = playable[currentPlayable].text;
+    if (text == null || text == undefined)
+        text = "Save";
     if (text.length > 10)
         text = text.substring(0, 10);
     saves.push({
@@ -61,6 +63,8 @@ function newSave(button, position) {
 }
 function eraseSave(button, position) {
     let text = playable[currentPlayable].text;
+    if (text == null || text == undefined)
+        text = "Save";
     if (text.length > 10)
         text = text.substring(0, 10);
     console.log(position);
