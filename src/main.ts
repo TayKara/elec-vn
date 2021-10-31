@@ -35,8 +35,10 @@ const defaultGameScenes = [];
 var gameScenes;
 const defaultGameCGs = [];
 var gameCGs;
+var playedPlayables = [];
 var reopenSettings = false;
 var currentPlayable = 0;
+var currentPlayableId = -1;
 var currentScene = -1;
 var currentScenePlayable;
 var currentCG = -1;
@@ -272,6 +274,7 @@ ipcMain.on("open", (event, args)=>{
       break;
     }
     case "title":{
+      playedPlayables = [];
       closeChildrenWindows();
       reopenPreviousState();
       top.loadFile(path.join(__dirname, "index.html"));
@@ -327,6 +330,10 @@ ipcMain.on("ask-current-playable", (event, arg)=>{
   event.returnValue = currentPlayable;
 });
 
+ipcMain.on("ask-current-playable-id", (event, arg)=>{
+  event.returnValue = currentPlayableId;
+});
+
 ipcMain.on("ask-dirname", (event, args)=>{
   event.returnValue = __dirname;
 });
@@ -357,6 +364,10 @@ ipcMain.on("ask-current-cg", (event, args)=>{
   currentCG = -1;
 });
 
+ipcMain.on("ask-played-playables", (event, args)=>{
+  event.returnValue = playedPlayables;
+})
+
 ipcMain.on("set-settings", (event, args)=>{
   gameSettings = args;
   top.webContents.send("settings-changed", gameSettings);
@@ -367,14 +378,27 @@ ipcMain.on("save-settings", (event, args)=>{
   saveSettings();
 });
 
-ipcMain.on("load-playable", (event, args)=>{
+ipcMain.on("load-game", (event, args)=>{
   currentState = STATE_LOAD;
-  currentLoadPlayable = PlayableGenerator.getPlayableByLoad(player, args);
+  playedPlayables = gameSaves[args[0]].playedPlayables;
+
+  currentLoadPlayable = PlayableGenerator.getPlayableByLoad(player, args[1]);
   top.loadFile(path.join(__dirname, "start.html"));
 })
 
 ipcMain.on("set-current-playable", (event, args)=>{
   currentPlayable = args;
+});
+
+ipcMain.on("set-current-playable-id", (event, args)=>{
+  currentPlayableId = args;
+  if(playedPlayables.length == 0 || playedPlayables[playedPlayables.length-1] != currentPlayableId){
+    playedPlayables.push(currentPlayableId);
+  }
+
+  console.log("current playable id : "+currentPlayableId);
+  console.log(playedPlayables);
+
 });
 
 ipcMain.on("set-game-saves", (event, args)=>{

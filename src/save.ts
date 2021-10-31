@@ -1,5 +1,9 @@
 var playable = window.api.sendSync("ask-playable");
 var currentPlayable = window.api.sendSync("ask-current-playable");
+var currentPlayableId = window.api.sendSync("ask-current-playable-id");
+var playedPlayables = window.api.sendSync("ask-played-playables");
+console.log("played playables");
+console.log(playedPlayables);
 var saves = window.api.sendSync("ask-saves");
 
 var containerSaves = document.getElementById("containerSaves");
@@ -64,7 +68,8 @@ function newSave(button, position){
     if(text.length > 10) text = text.substring(0, 10);
     saves.push({
         "text": text,
-        "playable": currentPlayable
+        "playableId": currentPlayableId,
+        "playedPlayables" : playedPlayables
     })
 
     button.innerText = text;
@@ -79,7 +84,7 @@ function eraseSave(button, position){
     console.log(position);
     button.innerText = text;
     saves[position].text = text;
-    saves[position].playable = currentPlayable;
+    saves[position].playableId = currentPlayableId;
     console.log(saves);
     window.api.send("set-game-saves", saves);
 }

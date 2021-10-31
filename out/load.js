@@ -1,5 +1,4 @@
 var playable = window.api.sendSync("ask-playable");
-var currentPlayable = window.api.sendSync("ask-current-playable");
 var saves = window.api.sendSync("ask-saves");
 var containerSaves = document.getElementById("containerSaves");
 var buttonReturn = document.getElementById("buttonReturn");
@@ -16,15 +15,14 @@ function addButtons() {
     addButton();
 }
 function addButton() {
-    console.log("addButton" + current + " " + length);
     if (current < length) {
         let button = document.createElement("button");
         button.setAttribute("class", "loadItem");
         let text;
         let thisButton = current;
-        text = saves[current].text;
+        text = saves[thisButton].text;
         button.addEventListener("click", (ev) => {
-            window.api.send("load-playable", saves[thisButton].playable);
+            window.api.send("load-game", [thisButton, saves[thisButton].playableId]);
             window.api.send("close-children");
         });
         current++;

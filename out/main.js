@@ -54,8 +54,10 @@ const defaultGameScenes = [];
 var gameScenes;
 const defaultGameCGs = [];
 var gameCGs;
+var playedPlayables = [];
 var reopenSettings = false;
 var currentPlayable = 0;
+var currentPlayableId = -1;
 var currentScene = -1;
 var currentScenePlayable;
 var currentCG = -1;
@@ -255,6 +257,7 @@ electron_1.ipcMain.on("open", (event, args) => {
             break;
         }
         case "title": {
+            playedPlayables = [];
             closeChildrenWindows();
             reopenPreviousState();
             top.loadFile(path.join(__dirname, "index.html"));
@@ -306,6 +309,9 @@ electron_1.ipcMain.on("ask-playable", (event, arg) => {
 electron_1.ipcMain.on("ask-current-playable", (event, arg) => {
     event.returnValue = currentPlayable;
 });
+electron_1.ipcMain.on("ask-current-playable-id", (event, arg) => {
+    event.returnValue = currentPlayableId;
+});
 electron_1.ipcMain.on("ask-dirname", (event, args) => {
     event.returnValue = __dirname;
 });
@@ -329,6 +335,9 @@ electron_1.ipcMain.on("ask-current-cg", (event, args) => {
     event.returnValue = currentCG;
     currentCG = -1;
 });
+electron_1.ipcMain.on("ask-played-playables", (event, args) => {
+    event.returnValue = playedPlayables;
+});
 electron_1.ipcMain.on("set-settings", (event, args) => {
     gameSettings = args;
     top.webContents.send("settings-changed", gameSettings);
@@ -337,13 +346,22 @@ electron_1.ipcMain.on("set-settings", (event, args) => {
 electron_1.ipcMain.on("save-settings", (event, args) => {
     saveSettings();
 });
-electron_1.ipcMain.on("load-playable", (event, args) => {
+electron_1.ipcMain.on("load-game", (event, args) => {
     currentState = STATE_LOAD;
-    currentLoadPlayable = PlayableGenerator_1.PlayableGenerator.getPlayableByLoad(player, args);
+    playedPlayables = gameSaves[args[0]].playedPlayables;
+    currentLoadPlayable = PlayableGenerator_1.PlayableGenerator.getPlayableByLoad(player, args[1]);
     top.loadFile(path.join(__dirname, "start.html"));
 });
 electron_1.ipcMain.on("set-current-playable", (event, args) => {
     currentPlayable = args;
+});
+electron_1.ipcMain.on("set-current-playable-id", (event, args) => {
+    currentPlayableId = args;
+    if (playedPlayables.length == 0 || playedPlayables[playedPlayables.length - 1] != currentPlayableId) {
+        playedPlayables.push(currentPlayableId);
+    }
+    console.log("current playable id : " + currentPlayableId);
+    console.log(playedPlayables);
 });
 electron_1.ipcMain.on("set-game-saves", (event, args) => {
     gameSaves = args;

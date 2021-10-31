@@ -52,7 +52,6 @@ buttonAuto?.addEventListener("click", (ev) => {
         playNext();
 });
 buttonLog?.addEventListener("click", (ev) => {
-    console.log("open log");
     window.api.send("open", "log");
     setNormalState();
 });
@@ -116,9 +115,11 @@ function playNext() {
     backgroundImageRear.style.opacity = "0";
     if (isPreviousTextWritten) {
         currentPlayable++;
-        window.api.send("set-current-playable", currentPlayable);
         audioVoice.pause();
         if (currentPlayable < playable.length) {
+            if (playable[currentPlayable].id != null && playable[currentPlayable].id != undefined)
+                window.api.send("set-current-playable-id", playable[currentPlayable].id);
+            window.api.send("set-current-playable", currentPlayable);
             let current = playable[currentPlayable];
             let type = "";
             if (current.type != null && current.type != undefined)
@@ -199,7 +200,6 @@ function playPlayable(current) {
 function switchBackround() {
     let opacityBackground = 0;
     let idSwitch = setInterval(() => {
-        console.log("dans l'interval " + opacityBackground);
         opacityBackground = opacityBackground + 0.1;
         if (!isRearBackgroundShown) {
             backgroundImageFront.style.opacity = (1 - opacityBackground) + "";
@@ -250,8 +250,6 @@ function writeText(text, textSpeed) {
     }
 }
 function autoPlay() {
-    console.log("autoPlay");
-    console.log(isAutoEnabled);
     setTimeout(() => {
         if (isAutoEnabled) {
             let current = playable[currentPlayable];
@@ -288,7 +286,6 @@ function setNormalState() {
     isAutoEnabled = false;
 }
 function applySettings() {
-    console.log(settings);
     if (settings != null && settings != undefined) {
         applyTextOpacity();
         applyBgmVolume();
