@@ -32,7 +32,7 @@ var isSkipEnabled = false;
 var isAutoEnabled = false;
 var isRearBackgroundShown = false;
 var idIntervalSwitchBackground;
-backgroundImageFront?.addEventListener("click", (ev) => {
+container?.addEventListener("click", (ev) => {
     if ((ev.target == backgroundImageFront || ev.target == containerText) && !(containerChoices.firstChild)) {
         setNormalState();
         playNext();
@@ -125,6 +125,7 @@ function playNext() {
             if (current.type != null && current.type != undefined)
                 type = current.type;
             if (type == TYPE_CHOICE) {
+                setNormalState();
                 playChoice(current);
             }
             else if (type == TYPE_GOTO) {
@@ -217,7 +218,7 @@ function switchBackround() {
     }, 50);
 }
 function playEnd() {
-    window.api.send("open", "title");
+    window.api.send("open", "cinematics");
 }
 function goTo(id) {
     for (let i = 0; i < playable.length; i++) {

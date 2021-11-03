@@ -273,6 +273,10 @@ ipcMain.on("open", (event, args)=>{
       top.loadFile(path.join(__dirname, "start.html"));
       break;
     }
+    case "cinematics":{
+      top.loadFile(path.join(__dirname, "cinematics.html"));
+      break;
+    }
     case "title":{
       playedPlayables = [];
       closeChildrenWindows();
