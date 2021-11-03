@@ -2,6 +2,7 @@
   "name": "elec-vn",
   "version": "1.0.0",
   "description": "Electron-based Visual Novel Engine",
+  "main":"./out/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
@@ -13,7 +14,7 @@
     "url": "git+https://github.com/TayKara/elec-vn.git"
   },
   "author": "Tay Kara",
-  "license": "ISC",
+  "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/TayKara/elec-vn/issues"
   },
