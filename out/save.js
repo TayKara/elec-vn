@@ -53,10 +53,12 @@ function addButton() {
 }
 function newSave(button, position) {
     let text = playable[currentPlayable].text;
+    console.log(text);
     if (text == null || text == undefined)
         text = "Save";
     if (text.length > 10)
-        text = text.substring(0, 10);
+        text = text.substring(0, 10) + "...";
+    text = text + "\nDate: " + (new Date).toLocaleString();
     saves.push({
         "text": text,
         "playableId": currentPlayableId,
@@ -68,10 +70,12 @@ function newSave(button, position) {
 }
 function eraseSave(button, position) {
     let text = playable[currentPlayable].text;
+    console.log(text);
     if (text == null || text == undefined)
         text = "Save";
     if (text.length > 10)
-        text = text.substring(0, 10);
+        text = text.substring(0, 10) + "...";
+    text = text + "\nDate: " + (new Date).toLocaleString();
     console.log(position);
     button.innerText = text;
     saves[position].text = text;
