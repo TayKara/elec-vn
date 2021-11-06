@@ -1,4 +1,4 @@
-@import "body.css";
+@import "presets.css";
 
 body{
     background: black;
@@ -74,7 +74,7 @@ body{
 }
 
 .buttonChoices{
-    font-size: 1em;
+    font-size:large;
 }
 
 ul {
@@ -89,21 +89,9 @@ ul {
  
  
 li button {
-    border: solid 2px gray;
     display: block;
-    color: none;
-    text-align: center;
     padding: 14px 16px;
-    text-decoration: none;
-     
-}
- 
-li button:hover:not(.active) {
-    border: solid 2px orange;
-}
- 
-li button:active {
-    background-color: #4CAF50;
+    font-size: medium;
 }
 
 .containerText{
@@ -117,8 +105,11 @@ li button:active {
     color:white;
     text-align: left;
     margin:10px;
+    padding:10px;
 
     text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+    border-radius: 8px;
+    outline: none;
 }
 
 .preloadImages{

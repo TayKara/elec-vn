@@ -1,0 +1,22 @@
+body{
+    overflow:hidden;
+}
+
+button{
+    text-align: center;
+    font-size:large;
+    border-radius: 8px;
+    color: black;
+    background-color: white;
+    border:solid 1px black;
+    outline: none;
+    text-decoration: none;
+}
+ 
+button:hover:not(.active) {
+    border: solid 2px orange;
+}
+
+button:active {
+    background-color: grey;
+}

@@ -1,4 +1,4 @@
-@import "body.css";
+@import "presets.css";
 
 .container{
     position:absolute;
@@ -43,6 +43,7 @@
     display: flex;
     flex-direction: column;
     overflow-y: scroll;
+    border-radius:8px
 }
 
 .containerButtons{
@@ -58,6 +59,12 @@
 .loadItem{
     font-size: 1em;
     padding: 10px;
+    border-radius: 0px;
+}
+
+.buttonReturn{
+    padding: 14px 16px;
+    font-size: medium;
 }
 
 p{
