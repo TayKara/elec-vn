@@ -46,6 +46,7 @@
     box-sizing: border-box;
     justify-items:center;
     overflow-y: scroll;
+    border-radius: 8px;
 }
 
 .containerButtons{
@@ -61,16 +62,19 @@
 .cgItem{
     box-sizing: border-box;
     width: 80%;
-    height: auto;
+    height: 80%;
     background: black;
     background-repeat: no-repeat;
     background-position: center;
     background-size:contain;
-    border: solid 1px white;
+    border: solid 2px white;
     margin:10px;
+    border-radius: 8px;
 }
 
 .cgItem:hover{
+    width: 90%;
+    height: 90%;
     border: solid 2px green;
 }
 

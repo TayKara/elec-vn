@@ -12,6 +12,9 @@ body{
     padding:0;
     top:0;
     left:0;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size:contain;
     display: flex;
     align-items: center;
     justify-content: center;

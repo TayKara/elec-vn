@@ -249,15 +249,17 @@ function reopenPreviousState() {
     }
     currentState = STATE_INIT;
 }
-//IPC MESSAGES
-electron_1.ipcMain.on("open", (event, args) => {
+function openWindow(args) {
     switch (args) {
         case "start": {
             top.loadFile(path.join(__dirname, "start.html"));
             break;
         }
         case "cinematics": {
-            top.loadFile(path.join(__dirname, "cinematics.html"));
+            if (currentState != STATE_SCENE)
+                top.loadFile(path.join(__dirname, "cinematics.html"));
+            else
+                openWindow("title");
             break;
         }
         case "title": {
@@ -292,6 +294,10 @@ electron_1.ipcMain.on("open", (event, args) => {
             break;
         }
     }
+}
+//IPC MESSAGES
+electron_1.ipcMain.on("open", (event, args) => {
+    openWindow(args);
 });
 electron_1.ipcMain.on("close-children", (event, args) => {
     closeChildrenWindows();
