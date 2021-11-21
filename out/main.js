@@ -47,6 +47,7 @@ const defaultGameSettings = {
     "voiceVolume": "100",
     "effectVolume": "80"
 };
+var meta;
 var gameSettings;
 const defaultGameSaves = [];
 var gameSaves;
@@ -77,7 +78,10 @@ electron_1.app.on('ready', () => {
     createWindow();
 });
 function createWindow() {
-    top = new electron_1.BrowserWindow({ width: 800, height: 600, webPreferences: {
+    let gameTitle = "Elec VN";
+    if (meta && meta.title)
+        gameTitle = meta.title;
+    top = new electron_1.BrowserWindow({ title: gameTitle, width: 800, height: 600, webPreferences: {
             nodeIntegration: false,
             contextIsolation: true,
             preload: path.join(__dirname, "preload.js")
@@ -113,6 +117,13 @@ function resizeChildWindows() {
     }
 }
 function loadFiles() {
+    try {
+        let metaFile = fs.readFileSync(path.join(__dirname, "game/meta.json"), { encoding: "utf-8" });
+        meta = JSON.parse(metaFile);
+    }
+    catch (exception) {
+        console.log(exception);
+    }
     try {
         let scriptObject = fs.readFileSync(path.join(__dirname, "game/script.json"), { encoding: "utf-8" });
         player = JSON.parse(scriptObject);
