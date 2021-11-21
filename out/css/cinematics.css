@@ -1,5 +1,9 @@
 @import "presets.css";
 
+body{
+    background: black;
+}
+
 .container{
     position:absolute;
     width: 100%;
@@ -8,7 +12,6 @@
     padding:0;
     top:0;
     left:0;
-    background-image: url("../theme/cinematics_background.png");
     background-repeat: no-repeat;
     background-position: center;
     background-size:contain;
@@ -23,7 +26,7 @@
     to   { opacity: 1; }
 }
 
-video{
+.cinematicsVideo{
     height: 100%;
     width: 177.77777778vh; /* 100 * 16 / 9 */
     min-width: 100%;

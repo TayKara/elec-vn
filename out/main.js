@@ -313,6 +313,9 @@ electron_1.ipcMain.on("open", (event, args) => {
 electron_1.ipcMain.on("close-children", (event, args) => {
     closeChildrenWindows();
 });
+electron_1.ipcMain.on("ask-meta", (event, arg) => {
+    event.returnValue = meta;
+});
 electron_1.ipcMain.on("ask-object", (event, arg) => {
     if (currentState == STATE_SCENE) {
         event.returnValue = currentSceneObject;

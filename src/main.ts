@@ -331,6 +331,10 @@ ipcMain.on("close-children", (event, args)=>{
   closeChildrenWindows();
 });
 
+ipcMain.on("ask-meta", (event, arg)=>{
+  event.returnValue = meta;
+});
+
 ipcMain.on("ask-object", (event, arg)=>{
   if(currentState == STATE_SCENE){
     event.returnValue = currentSceneObject;
