@@ -1,7 +1,7 @@
 {
-  "name": "elec-vn",
+  "name": "elec-vn-core",
   "version": "1.0.0",
-  "description": "Electron-based Visual Novel Engine",
+  "description": "Electron-based Visual Novel Engine Core",
   "main": "./out/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/TayKara/elec-vn.git"
+    "url": "git+https://github.com/TayKara/elec-vn-core.git"
   },
   "author": "Tay Kara",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/TayKara/elec-vn/issues"
+    "url": "https://github.com/TayKara/elec-vn-core/issues"
   },
-  "homepage": "https://github.com/TayKara/elec-vn#readme",
+  "homepage": "https://github.com/TayKara/elec-vn-core#readme",
   "devDependencies": {
     "electron": "^16.0.1",
     "typescript": "^4.2.4"
