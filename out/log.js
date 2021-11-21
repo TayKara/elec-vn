@@ -12,17 +12,17 @@ function addButtons(listButtons) {
     console.log(playedObjects);
     for (let i = 0; i < playedObjects.length; i++) {
         let value = object.find(element => (element.id == playedObjects[i] && element.type == "object"));
-        if (value != null || value != undefined) {
+        if (value) {
             let button = document.createElement("button");
             button.setAttribute("class", "logItem");
             value = object[i];
-            if (value.audioVoice != null && value.audioVoice != undefined) {
+            if (value.audioVoice) {
                 button.addEventListener("click", () => {
                     audio.setAttribute("src", dirname + "/game/sound/" + value.audioVoice);
                     audio.play();
                 });
             }
-            if (value.text != null && value.text != undefined) {
+            if (value.text) {
                 button.innerText = value.text;
             }
             containerLogs.appendChild(button);

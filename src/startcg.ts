@@ -29,8 +29,8 @@ function preloadImages(nbImgToLoad){
     for(let i=0; alreadyPreloadedObject < object.length && i < nbImgToLoad; i++){
         let current = object[alreadyPreloadedObject];
         alreadyPreloadedObject++;
-        if(current.image != null && current.image != undefined){
-            if(preloadImgs[preloadImgPos] != null || preloadImgs[preloadImgPos] != undefined){
+        if(current.image){
+            if(preloadImgs[preloadImgPos]){
                 divImages.removeChild(divImages.childNodes[preloadImgPos]);
             }
             preloadImgs[preloadImgPos] = new Image();
@@ -49,7 +49,7 @@ function playNext(){
 
         let current = object[currentObject];
 
-        if(current.image != null && current.image != undefined){
+        if(current.image){
             container.style.backgroundImage = "url('"+dirname + "/game/image/" + current.image+"')";
             preloadImages(1);
         }

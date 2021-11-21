@@ -9,11 +9,11 @@ buttonReturn.addEventListener("click", (ev) => {
 });
 addScenes();
 function addScenes() {
-    if (scenes != null && scenes != undefined && objects != null && objects != undefined) {
+    if (scenes && objects) {
         for (let i = 0; i < scenes.length; i++) {
             let image;
             for (let j = 0; j < objects.length; j++) {
-                if (objects[j].image != null && objects[j] != undefined)
+                if (objects[j].image)
                     image = objects[j].image;
                 if (objects[j].id == scenes[i].ids[0]) {
                     addScene(image, i);

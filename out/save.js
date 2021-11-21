@@ -14,7 +14,7 @@ buttonReturn.addEventListener("click", (ev) => {
 });
 addButtons();
 function addButtons() {
-    if (saves != null && saves != undefined) {
+    if (saves) {
         length = saves.length;
     }
     addButton();
@@ -53,7 +53,7 @@ function addButton() {
 }
 function newSave(button, position) {
     let text = object[currentObject].text;
-    if (text == null || text == undefined)
+    if (!text)
         text = "Save";
     if (text.length > 10)
         text = (text.substring(0, 10) + "...");
@@ -69,7 +69,7 @@ function newSave(button, position) {
 }
 function eraseSave(button, position) {
     let text = object[currentObject].text;
-    if (text == null || text == undefined)
+    if (!text)
         text = "Save";
     if (text.length > 10)
         text = (text.substring(0, 10) + "...");

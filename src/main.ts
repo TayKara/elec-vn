@@ -187,7 +187,7 @@ function applySettings(){
 
   if(gameSettings.screen == "full" && !top.isFullScreen()
   || gameSettings.screen != "full" && top.isFullScreen()){
-    if(settings != null && settings != undefined){
+    if(settings){
       reopenSettings = true;
       settings.close();
     }

@@ -47,7 +47,7 @@ window.api.receive("settings-changed", (args)=>{
 });
 
 function applySettings(){
-    if(settings != null && settings != undefined){
+    if(settings){
         applyBgmVolume();
     }
 }

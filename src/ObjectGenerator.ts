@@ -33,11 +33,11 @@ export class ObjectGenerator{
         let i=0;
 
         while(i < copyObjects.length){
-            if(copyObjects[i].image != null && copyObjects[i].image != undefined){
+            if(copyObjects[i].image){
                 image = copyObjects[i].image;
             }
             if(cg.ids.includes(copyObjects[i].id)){
-                if(copyObjects[i].image == null || copyObjects[i].image == undefined){
+                if(!copyObjects[i].image){
                     copyObjects.splice(i, 1);
                 }else{
                     i++;

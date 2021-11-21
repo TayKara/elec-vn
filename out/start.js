@@ -90,15 +90,15 @@ function preloadImages(nbImgToLoad) {
     for (let i = 0; alreadyPreloadedObject < object.length && i < nbImgToLoad; i++) {
         let current = object[alreadyPreloadedObject];
         alreadyPreloadedObject++;
-        if (current.image != null && current.image != undefined) {
-            if (preloadImgs[preloadImgPos] != null || preloadImgs[preloadImgPos] != undefined) {
+        if (current.image) {
+            if (preloadImgs[preloadImgPos]) {
                 divImages.removeChild(divImages.childNodes[preloadImgPos]);
             }
             preloadImgs[preloadImgPos] = new Image();
             preloadImgs[preloadImgPos].src = dirname + "/game/image/" + current.image;
             divImages.appendChild(preloadImgs[preloadImgPos]);
             preloadImgPos++;
-            if (current.image2 != null && current.image2 != undefined) {
+            if (current.image2) {
                 preloadImgs[preloadImgPos] = new Image();
                 preloadImgs[preloadImgPos].src = dirname + "/game/image/" + current.image;
                 divImages.appendChild(preloadImgs[preloadImgPos]);
@@ -117,12 +117,12 @@ function playNext() {
         currentObject++;
         audioVoice.pause();
         if (currentObject < object.length) {
-            if (object[currentObject].id != null && object[currentObject].id != undefined)
+            if (object[currentObject].id)
                 window.api.send("set-current-object-id", object[currentObject].id);
             window.api.send("set-current-object", currentObject);
             let current = object[currentObject];
             let type = "";
-            if (current.type != null && current.type != undefined)
+            if (current.type)
                 type = current.type;
             if (type == TYPE_CHOICE) {
                 setNormalState();
@@ -146,7 +146,7 @@ function playNext() {
     else {
         clearInterval(intervalWriteText);
         let current = object[currentObject];
-        if (current.text != undefined && current.text != null)
+        if (current.text)
             writeText(current.text, 0);
     }
 }
@@ -166,29 +166,29 @@ function playChoice(current) {
     }
 }
 function playObject(current) {
-    if (current.text != null && current.text != undefined) {
+    if (current.text) {
         writeText(current.text, settings.textSpeed);
     }
-    if (current.image != null && current.image != undefined) {
+    if (current.image) {
         backgroundImageFront.style.backgroundImage = "url('" + dirname + "/game/image/" + current.image + "')";
         preloadImages(1);
     }
-    if (current.image2 != null && current.image2 != undefined) {
+    if (current.image2) {
         backgroundImageRear.style.backgroundImage = "url('" + dirname + "/game/image/" + current.image2 + "')";
         preloadImages(1);
         idIntervalSwitchBackground = setInterval(() => {
             switchBackround();
         }, 1000);
     }
-    if (current.audioBGM != null && current.audioBGM != undefined) {
+    if (current.audioBGM) {
         audioBGM.setAttribute("src", dirname + "/game/sound/" + current.audioBGM);
         audioBGM.play();
     }
-    if (current.audioEffect != null && current.audioEffect != undefined) {
+    if (current.audioEffect) {
         audioEffect.setAttribute("src", dirname + "/game/sound/" + current.audioEffect);
         audioEffect.play();
     }
-    if (current.audioVoice != null && current.audioVoice != undefined) {
+    if (current.audioVoice) {
         audioVoice.setAttribute("src", dirname + "/game/sound/" + current.audioVoice);
         audioVoice.play();
         audioVoice.removeEventListener("play", autoPlay);
@@ -254,7 +254,7 @@ function autoPlay() {
     setTimeout(() => {
         if (isAutoEnabled) {
             let current = object[currentObject];
-            if (current.audioVoice != null && current.audioVoice != undefined) {
+            if (current.audioVoice) {
                 let timeout = audioVoice.duration - audioVoice.currentTime;
                 if (timeout < 0)
                     timeout = 0;
@@ -287,7 +287,7 @@ function setNormalState() {
     isAutoEnabled = false;
 }
 function applySettings() {
-    if (settings != null && settings != undefined) {
+    if (settings) {
         applyTextOpacity();
         applyBgmVolume();
         applyVoiceVolume();

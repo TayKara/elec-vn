@@ -9,7 +9,7 @@ buttonReturn.addEventListener("click", (ev) => {
 });
 addButtons();
 function addButtons() {
-    if (saves != null && saves != undefined) {
+    if (saves) {
         length = saves.length;
     }
     addButton();

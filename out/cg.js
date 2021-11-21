@@ -9,11 +9,11 @@ buttonReturn.addEventListener("click", (ev) => {
 });
 addCGs();
 function addCGs() {
-    if (cgs != null && cgs != undefined && objects != null && objects != undefined) {
+    if (cgs && objects) {
         for (let i = 0; i < cgs.length; i++) {
             let image;
             for (let j = 0; j < objects.length; j++) {
-                if (objects[j].image != null && objects[j] != undefined)
+                if (objects[j].image)
                     image = objects[j].image;
                 if (objects[j].id == cgs[i].ids[0]) {
                     addCG(image, i);

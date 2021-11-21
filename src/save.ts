@@ -20,7 +20,7 @@ addButtons();
 
 function addButtons(){
 
-    if(saves != null && saves != undefined){
+    if(saves){
         length = saves.length;
     }
     
@@ -64,7 +64,7 @@ function addButton(){
 
 function newSave(button, position){
     let text : string = object[currentObject].text;
-    if(text == null || text == undefined) text = "Save";
+    if(!text) text = "Save";
     if(text.length > 10) text = (text.substring(0, 10) + "...");
     text = text + "\n"+ (new Date).toLocaleString();
     saves.push({
@@ -80,7 +80,7 @@ function newSave(button, position){
 
 function eraseSave(button, position){
     let text : string = object[currentObject].text;
-    if(text == null || text == undefined) text = "Save";
+    if(!text) text = "Save";
     if(text.length > 10) text = (text.substring(0, 10) + "...");
     text = text + "\n"+ (new Date).toLocaleString();
     console.log(position);
