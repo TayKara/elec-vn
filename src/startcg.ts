@@ -1,11 +1,11 @@
-var playable : JSON;
+var object : JSON;
 var dirname : string;
-var currentPlayable = -1;
+var currentObject = -1;
 var container = document.getElementById("container");
 var divImages = document.getElementById("preloadImages");
 var preloadImgs = new Array();
 var preloadImgPos = 0;
-var alreadyPreloadedPlayable = 0;
+var alreadyPreloadedObject = 0;
 
 const MAX_LOADED_IMAGE = 20;
 
@@ -17,7 +17,7 @@ container?.addEventListener("click", (ev:Event) => {
 });
 
 
-playable = window.api.sendSync("ask-playable");
+object = window.api.sendSync("ask-object");
 dirname = window.api.sendSync("ask-dirname");
 
 
@@ -26,9 +26,9 @@ preloadImages(MAX_LOADED_IMAGE);
 playNext();
 
 function preloadImages(nbImgToLoad){
-    for(let i=0; alreadyPreloadedPlayable < playable.length && i < nbImgToLoad; i++){
-        let current = playable[alreadyPreloadedPlayable];
-        alreadyPreloadedPlayable++;
+    for(let i=0; alreadyPreloadedObject < object.length && i < nbImgToLoad; i++){
+        let current = object[alreadyPreloadedObject];
+        alreadyPreloadedObject++;
         if(current.image != null && current.image != undefined){
             if(preloadImgs[preloadImgPos] != null || preloadImgs[preloadImgPos] != undefined){
                 divImages.removeChild(divImages.childNodes[preloadImgPos]);
@@ -44,10 +44,10 @@ function preloadImages(nbImgToLoad){
 }
 
 function playNext(){
-    currentPlayable++;
-    if(currentPlayable < playable.length){
+    currentObject++;
+    if(currentObject < object.length){
 
-        let current = playable[currentPlayable];
+        let current = object[currentObject];
 
         if(current.image != null && current.image != undefined){
             container.style.backgroundImage = "url('"+dirname + "/game/image/" + current.image+"')";

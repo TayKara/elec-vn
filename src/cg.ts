@@ -1,5 +1,5 @@
 var cgs = window.api.sendSync("ask-cgs");
-var playables = window.api.sendSync("ask-playable");
+var objects = window.api.sendSync("ask-object");
 var dirname = window.api.sendSync("ask-dirname");
 var currentCG = window.api.sendSync("ask-current-cg");
 
@@ -13,13 +13,13 @@ buttonReturn.addEventListener("click", (ev:Event)=>{
 addCGs();
 
 function addCGs(){
-    if(cgs != null && cgs != undefined && playables != null && playables != undefined){
+    if(cgs != null && cgs != undefined && objects != null && objects != undefined){
         for(let i = 0; i < cgs.length; i++){
             let image;
-            for(let j = 0; j < playables.length; j++){
-                if(playables[j].image != null && playables[j] != undefined)
-                    image = playables[j].image;
-                if(playables[j].id == cgs[i].ids[0]){
+            for(let j = 0; j < objects.length; j++){
+                if(objects[j].image != null && objects[j] != undefined)
+                    image = objects[j].image;
+                if(objects[j].id == cgs[i].ids[0]){
                     addCG(image, i)
                     break;
                 }

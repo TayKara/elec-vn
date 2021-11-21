@@ -1,4 +1,4 @@
-var playable = window.api.sendSync("ask-playable");
+var object = window.api.sendSync("ask-object");
 var saves = window.api.sendSync("ask-saves");
 
 var containerSaves = document.getElementById("containerSaves");
@@ -35,7 +35,7 @@ function addButton(){
         text = saves[thisButton].text;
         
         button.addEventListener("click", (ev:Event)=>{
-            window.api.send("load-game", [thisButton,saves[thisButton].playableId]);
+            window.api.send("load-game", [thisButton,saves[thisButton].objectId]);
             window.api.send("close-children");
         });
         current++;

@@ -1,7 +1,7 @@
-var playable : JSON;
+var object : JSON;
 var dirname : string;
 var settings : JSON;
-var currentPlayable = -1;
+var currentObject = -1;
 var backgroundImageFront = document.getElementById("backgroundImageFront");
 var backgroundImageRear = document.getElementById("backgroundImageRear");
 var containerText = document.getElementById("containerText");
@@ -20,14 +20,14 @@ var buttonSettings = document.getElementById("buttonSettings");
 var buttonTitle = document.getElementById("buttonTitle");
 
 const MAX_LOADED_IMAGE = 20;
-const TYPE_PLAYABLE = "playable";
+const TYPE_PLAYABLE = "object";
 const TYPE_CHOICE = "choice";
 const TYPE_END = "end";
 const TYPE_GOTO = "goto";
 
 var preloadImgs = new Array();
 var preloadImgPos = 0;
-var alreadyPreloadedPlayable = 0;
+var alreadyPreloadedObject = 0;
 var intervalWriteText;
 var intervalSkip;
 var isPreviousTextWritten = true;
@@ -78,7 +78,7 @@ buttonTitle?.addEventListener("click", (ev:Event) => {
         window.api.send("open", "title");
 });
 
-playable = window.api.sendSync("ask-playable");
+object = window.api.sendSync("ask-object");
 dirname = window.api.sendSync("ask-dirname");
 settings = window.api.sendSync("ask-settings");
 
@@ -89,9 +89,9 @@ window.api.receive("settings-changed", (args)=>{
     applySettings();
 });
 
-window.api.receive("playable-loaded", (args)=>{
+window.api.receive("object-loaded", (args)=>{
     setNormalState();
-    currentPlayable = args - 1;
+    currentObject = args - 1;
     playNext();
 });
 
@@ -100,9 +100,9 @@ preloadImages(MAX_LOADED_IMAGE);
 playNext();
 
 function preloadImages(nbImgToLoad){
-    for(let i=0; alreadyPreloadedPlayable < playable.length && i < nbImgToLoad; i++){
-        let current = playable[alreadyPreloadedPlayable];
-        alreadyPreloadedPlayable++;
+    for(let i=0; alreadyPreloadedObject < object.length && i < nbImgToLoad; i++){
+        let current = object[alreadyPreloadedObject];
+        alreadyPreloadedObject++;
         if(current.image != null && current.image != undefined){
             if(preloadImgs[preloadImgPos] != null || preloadImgs[preloadImgPos] != undefined){
                 divImages.removeChild(divImages.childNodes[preloadImgPos]);
@@ -129,14 +129,14 @@ function playNext(){
     backgroundImageFront.style.opacity = "1";
     backgroundImageRear.style.opacity = "0";
     if(isPreviousTextWritten){
-        currentPlayable++;
+        currentObject++;
         audioVoice.pause();
-        if(currentPlayable < playable.length){
-            if(playable[currentPlayable].id != null && playable[currentPlayable].id != undefined)
-                window.api.send("set-current-playable-id", playable[currentPlayable].id);
-            window.api.send("set-current-playable", currentPlayable);
+        if(currentObject < object.length){
+            if(object[currentObject].id != null && object[currentObject].id != undefined)
+                window.api.send("set-current-object-id", object[currentObject].id);
+            window.api.send("set-current-object", currentObject);
 
-            let current = playable[currentPlayable];
+            let current = object[currentObject];
             let type = "";
             if(current.type != null && current.type != undefined)
                 type = current.type;
@@ -152,7 +152,7 @@ function playNext(){
                 playEnd();
             }
             else{
-                playPlayable(current);
+                playObject(current);
             }
 
         }
@@ -161,7 +161,7 @@ function playNext(){
         }
     }else{
         clearInterval(intervalWriteText);
-        let current = playable[currentPlayable];
+        let current = object[currentObject];
         if(current.text != undefined && current.text != null)
             writeText(current.text, 0);
     }
@@ -184,7 +184,7 @@ function playChoice(current){
     }
 }
 
-function playPlayable(current){
+function playObject(current){
     if(current.text != null && current.text != undefined){
         writeText(current.text, settings.textSpeed);
     }
@@ -243,9 +243,9 @@ function playEnd(){
 
 function goTo(id){
 
-    for(let i=0; i < playable.length; i++){
-        if(playable[i].id == id){
-            currentPlayable = --i;
+    for(let i=0; i < object.length; i++){
+        if(object[i].id == id){
+            currentObject = --i;
             break;
         }
     }
@@ -277,7 +277,7 @@ function writeText(text : string, textSpeed){
 function autoPlay(){
     setTimeout(()=>{
         if(isAutoEnabled){
-            let current = playable[currentPlayable];
+            let current = object[currentObject];
             if(current.audioVoice != null && current.audioVoice != undefined){
                 let timeout = audioVoice.duration - audioVoice.currentTime;
                 if(timeout < 0) timeout = 0;

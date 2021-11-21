@@ -22,7 +22,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const electron_1 = require("electron");
 const path = __importStar(require("path"));
 const fs = __importStar(require("fs"));
-const PlayableGenerator_1 = require("./PlayableGenerator");
+const ObjectGenerator_1 = require("./ObjectGenerator");
 const STATE_SCENE = "SCENE";
 const STATE_CG = "CG";
 const STATE_PLAY = "PLAY";
@@ -54,15 +54,15 @@ const defaultGameScenes = [];
 var gameScenes;
 const defaultGameCGs = [];
 var gameCGs;
-var playedPlayables = [];
+var playedObjects = [];
 var reopenSettings = false;
-var currentPlayable = 0;
-var currentPlayableId = -1;
+var currentObject = 0;
+var currentObjectId = -1;
 var currentScene = -1;
-var currentScenePlayable;
+var currentSceneObject;
 var currentCG = -1;
-var currentCGPlayable;
-var currentLoadPlayable;
+var currentCGObject;
+var currentLoadObject;
 var currentState = STATE_INIT;
 loadFiles();
 electron_1.app.on('ready', () => {
@@ -114,8 +114,8 @@ function resizeChildWindows() {
 }
 function loadFiles() {
     try {
-        let scriptPlayable = fs.readFileSync(path.join(__dirname, "game/script.json"), { encoding: "utf-8" });
-        player = JSON.parse(scriptPlayable);
+        let scriptObject = fs.readFileSync(path.join(__dirname, "game/script.json"), { encoding: "utf-8" });
+        player = JSON.parse(scriptObject);
     }
     catch (exception) {
         console.log(exception);
@@ -261,7 +261,7 @@ electron_1.ipcMain.on("open", (event, args) => {
             break;
         }
         case "title": {
-            playedPlayables = [];
+            playedObjects = [];
             closeChildrenWindows();
             reopenPreviousState();
             top.loadFile(path.join(__dirname, "index.html"));
@@ -296,25 +296,25 @@ electron_1.ipcMain.on("open", (event, args) => {
 electron_1.ipcMain.on("close-children", (event, args) => {
     closeChildrenWindows();
 });
-electron_1.ipcMain.on("ask-playable", (event, arg) => {
+electron_1.ipcMain.on("ask-object", (event, arg) => {
     if (currentState == STATE_SCENE) {
-        event.returnValue = currentScenePlayable;
+        event.returnValue = currentSceneObject;
     }
     else if (currentState == STATE_CG) {
-        event.returnValue = currentCGPlayable;
+        event.returnValue = currentCGObject;
     }
     else if (currentState == STATE_LOAD) {
-        event.returnValue = currentLoadPlayable;
+        event.returnValue = currentLoadObject;
     }
     else {
         event.returnValue = player;
     }
 });
-electron_1.ipcMain.on("ask-current-playable", (event, arg) => {
-    event.returnValue = currentPlayable;
+electron_1.ipcMain.on("ask-current-object", (event, arg) => {
+    event.returnValue = currentObject;
 });
-electron_1.ipcMain.on("ask-current-playable-id", (event, arg) => {
-    event.returnValue = currentPlayableId;
+electron_1.ipcMain.on("ask-current-object-id", (event, arg) => {
+    event.returnValue = currentObjectId;
 });
 electron_1.ipcMain.on("ask-dirname", (event, args) => {
     event.returnValue = __dirname;
@@ -339,8 +339,8 @@ electron_1.ipcMain.on("ask-current-cg", (event, args) => {
     event.returnValue = currentCG;
     currentCG = -1;
 });
-electron_1.ipcMain.on("ask-played-playables", (event, args) => {
-    event.returnValue = playedPlayables;
+electron_1.ipcMain.on("ask-played-objects", (event, args) => {
+    event.returnValue = playedObjects;
 });
 electron_1.ipcMain.on("set-settings", (event, args) => {
     gameSettings = args;
@@ -352,20 +352,20 @@ electron_1.ipcMain.on("save-settings", (event, args) => {
 });
 electron_1.ipcMain.on("load-game", (event, args) => {
     currentState = STATE_LOAD;
-    playedPlayables = gameSaves[args[0]].playedPlayables;
-    currentLoadPlayable = PlayableGenerator_1.PlayableGenerator.getPlayableByLoad(player, args[1]);
+    playedObjects = gameSaves[args[0]].playedObjects;
+    currentLoadObject = ObjectGenerator_1.ObjectGenerator.getObjectByLoad(player, args[1]);
     top.loadFile(path.join(__dirname, "start.html"));
 });
-electron_1.ipcMain.on("set-current-playable", (event, args) => {
-    currentPlayable = args;
+electron_1.ipcMain.on("set-current-object", (event, args) => {
+    currentObject = args;
 });
-electron_1.ipcMain.on("set-current-playable-id", (event, args) => {
-    currentPlayableId = args;
-    if (playedPlayables.length == 0 || playedPlayables[playedPlayables.length - 1] != currentPlayableId) {
-        playedPlayables.push(currentPlayableId);
+electron_1.ipcMain.on("set-current-object-id", (event, args) => {
+    currentObjectId = args;
+    if (playedObjects.length == 0 || playedObjects[playedObjects.length - 1] != currentObjectId) {
+        playedObjects.push(currentObjectId);
     }
-    console.log("current playable id : " + currentPlayableId);
-    console.log(playedPlayables);
+    console.log("current object id : " + currentObjectId);
+    console.log(playedObjects);
 });
 electron_1.ipcMain.on("set-game-saves", (event, args) => {
     gameSaves = args;
@@ -375,7 +375,7 @@ electron_1.ipcMain.on("set-game-saves", (event, args) => {
 electron_1.ipcMain.on("start-scene", (event, args) => {
     if (!isNaN(args)) {
         currentState = STATE_SCENE;
-        currentScenePlayable = PlayableGenerator_1.PlayableGenerator.getPlayableByScenes(player, gameScenes[args]);
+        currentSceneObject = ObjectGenerator_1.ObjectGenerator.getObjectByScenes(player, gameScenes[args]);
         currentScene = args;
         closeChildrenWindows();
         top.loadFile(path.join(__dirname, "start.html"));
@@ -384,7 +384,7 @@ electron_1.ipcMain.on("start-scene", (event, args) => {
 electron_1.ipcMain.on("start-cg", (event, args) => {
     if (!isNaN(args)) {
         currentState = STATE_CG;
-        currentCGPlayable = PlayableGenerator_1.PlayableGenerator.getPlayableByCGs(player, gameCGs[args]);
+        currentCGObject = ObjectGenerator_1.ObjectGenerator.getObjectByCGs(player, gameCGs[args]);
         currentCG = args;
         closeChildrenWindows();
         top.loadFile(path.join(__dirname, "startcg.html"));

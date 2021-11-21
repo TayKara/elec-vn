@@ -1,6 +1,6 @@
-var playable = window.api.sendSync("ask-playable");
+var object = window.api.sendSync("ask-object");
 var dirname = window.api.sendSync("ask-dirname");
-var playedPlayables = window.api.sendSync("ask-played-playables");
+var playedObjects = window.api.sendSync("ask-played-objects");
 var audio = document.getElementById("audioVoice");
 var containerLogs = document.getElementById("containerLogs");
 var buttonReturn = document.getElementById("buttonReturn");
@@ -8,14 +8,14 @@ buttonReturn.addEventListener("click", (ev) => {
     window.api.send("close-children");
 });
 function addButtons(listButtons) {
-    console.log("log playable");
-    console.log(playedPlayables);
-    for (let i = 0; i < playedPlayables.length; i++) {
-        let value = playable.find(element => (element.id == playedPlayables[i] && element.type == "playable"));
+    console.log("log object");
+    console.log(playedObjects);
+    for (let i = 0; i < playedObjects.length; i++) {
+        let value = object.find(element => (element.id == playedObjects[i] && element.type == "object"));
         if (value != null || value != undefined) {
             let button = document.createElement("button");
             button.setAttribute("class", "logItem");
-            value = playable[i];
+            value = object[i];
             if (value.audioVoice != null && value.audioVoice != undefined) {
                 button.addEventListener("click", () => {
                     audio.setAttribute("src", dirname + "/game/sound/" + value.audioVoice);
@@ -31,4 +31,4 @@ function addButtons(listButtons) {
     let button = containerLogs.childNodes[containerLogs.childNodes.length - 1];
     button.scrollIntoView();
 }
-addButtons(playedPlayables);
+addButtons(playedObjects);

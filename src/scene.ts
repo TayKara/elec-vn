@@ -1,5 +1,5 @@
 var scenes = window.api.sendSync("ask-scenes");
-var playables = window.api.sendSync("ask-playable");
+var objects = window.api.sendSync("ask-object");
 var dirname = window.api.sendSync("ask-dirname");
 var currentScene = window.api.sendSync("ask-current-scene");
 
@@ -13,13 +13,13 @@ buttonReturn.addEventListener("click", (ev:Event)=>{
 addScenes();
 
 function addScenes(){
-    if(scenes != null && scenes != undefined && playables != null && playables != undefined){
+    if(scenes != null && scenes != undefined && objects != null && objects != undefined){
         for(let i = 0; i < scenes.length; i++){
             let image;
-            for(let j = 0; j < playables.length; j++){
-                if(playables[j].image != null && playables[j] != undefined)
-                    image = playables[j].image;
-                if(playables[j].id == scenes[i].ids[0]){
+            for(let j = 0; j < objects.length; j++){
+                if(objects[j].image != null && objects[j] != undefined)
+                    image = objects[j].image;
+                if(objects[j].id == scenes[i].ids[0]){
                     addScene(image, i)
                     break;
                 }

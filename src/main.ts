@@ -1,7 +1,7 @@
 import { app, BrowserWindow, ipcMain, webContents } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
-import { PlayableGenerator } from './PlayableGenerator';
+import { ObjectGenerator } from './ObjectGenerator';
 
 const STATE_SCENE = "SCENE";
 const STATE_CG = "CG";
@@ -35,15 +35,15 @@ const defaultGameScenes = [];
 var gameScenes;
 const defaultGameCGs = [];
 var gameCGs;
-var playedPlayables = [];
+var playedObjects = [];
 var reopenSettings = false;
-var currentPlayable = 0;
-var currentPlayableId = -1;
+var currentObject = 0;
+var currentObjectId = -1;
 var currentScene = -1;
-var currentScenePlayable;
+var currentSceneObject;
 var currentCG = -1;
-var currentCGPlayable;
-var currentLoadPlayable;
+var currentCGObject;
+var currentLoadObject;
 var currentState = STATE_INIT;
 
 loadFiles();
@@ -112,8 +112,8 @@ function resizeChildWindows(){
 
 function loadFiles(){
   try{
-    let scriptPlayable = fs.readFileSync(path.join(__dirname, "game/script.json"), {encoding:"utf-8"});
-    player = JSON.parse(scriptPlayable);
+    let scriptObject = fs.readFileSync(path.join(__dirname, "game/script.json"), {encoding:"utf-8"});
+    player = JSON.parse(scriptObject);
     
   }catch(exception){
     console.log(exception);
@@ -278,7 +278,7 @@ ipcMain.on("open", (event, args)=>{
       break;
     }
     case "title":{
-      playedPlayables = [];
+      playedObjects = [];
       closeChildrenWindows();
       reopenPreviousState();
       top.loadFile(path.join(__dirname, "index.html"));
@@ -315,27 +315,27 @@ ipcMain.on("close-children", (event, args)=>{
   closeChildrenWindows();
 });
 
-ipcMain.on("ask-playable", (event, arg)=>{
+ipcMain.on("ask-object", (event, arg)=>{
   if(currentState == STATE_SCENE){
-    event.returnValue = currentScenePlayable;
+    event.returnValue = currentSceneObject;
   }
   else if(currentState == STATE_CG){
-    event.returnValue = currentCGPlayable;
+    event.returnValue = currentCGObject;
   }
   else if(currentState == STATE_LOAD){
-    event.returnValue = currentLoadPlayable;
+    event.returnValue = currentLoadObject;
   }
   else{
     event.returnValue = player;
   }
 });
 
-ipcMain.on("ask-current-playable", (event, arg)=>{
-  event.returnValue = currentPlayable;
+ipcMain.on("ask-current-object", (event, arg)=>{
+  event.returnValue = currentObject;
 });
 
-ipcMain.on("ask-current-playable-id", (event, arg)=>{
-  event.returnValue = currentPlayableId;
+ipcMain.on("ask-current-object-id", (event, arg)=>{
+  event.returnValue = currentObjectId;
 });
 
 ipcMain.on("ask-dirname", (event, args)=>{
@@ -368,8 +368,8 @@ ipcMain.on("ask-current-cg", (event, args)=>{
   currentCG = -1;
 });
 
-ipcMain.on("ask-played-playables", (event, args)=>{
-  event.returnValue = playedPlayables;
+ipcMain.on("ask-played-objects", (event, args)=>{
+  event.returnValue = playedObjects;
 })
 
 ipcMain.on("set-settings", (event, args)=>{
@@ -384,24 +384,24 @@ ipcMain.on("save-settings", (event, args)=>{
 
 ipcMain.on("load-game", (event, args)=>{
   currentState = STATE_LOAD;
-  playedPlayables = gameSaves[args[0]].playedPlayables;
+  playedObjects = gameSaves[args[0]].playedObjects;
 
-  currentLoadPlayable = PlayableGenerator.getPlayableByLoad(player, args[1]);
+  currentLoadObject = ObjectGenerator.getObjectByLoad(player, args[1]);
   top.loadFile(path.join(__dirname, "start.html"));
 })
 
-ipcMain.on("set-current-playable", (event, args)=>{
-  currentPlayable = args;
+ipcMain.on("set-current-object", (event, args)=>{
+  currentObject = args;
 });
 
-ipcMain.on("set-current-playable-id", (event, args)=>{
-  currentPlayableId = args;
-  if(playedPlayables.length == 0 || playedPlayables[playedPlayables.length-1] != currentPlayableId){
-    playedPlayables.push(currentPlayableId);
+ipcMain.on("set-current-object-id", (event, args)=>{
+  currentObjectId = args;
+  if(playedObjects.length == 0 || playedObjects[playedObjects.length-1] != currentObjectId){
+    playedObjects.push(currentObjectId);
   }
 
-  console.log("current playable id : "+currentPlayableId);
-  console.log(playedPlayables);
+  console.log("current object id : "+currentObjectId);
+  console.log(playedObjects);
 
 });
 
@@ -414,7 +414,7 @@ ipcMain.on("set-game-saves", (event, args)=>{
 ipcMain.on("start-scene", (event, args)=>{
   if(!isNaN(args)){
     currentState = STATE_SCENE;
-    currentScenePlayable = PlayableGenerator.getPlayableByScenes(player, gameScenes[args]);
+    currentSceneObject = ObjectGenerator.getObjectByScenes(player, gameScenes[args]);
     currentScene = args;
     closeChildrenWindows();
     top.loadFile(path.join(__dirname, "start.html"));
@@ -424,7 +424,7 @@ ipcMain.on("start-scene", (event, args)=>{
 ipcMain.on("start-cg", (event, args)=>{
   if(!isNaN(args)){
     currentState = STATE_CG;
-    currentCGPlayable = PlayableGenerator.getPlayableByCGs(player, gameCGs[args]);
+    currentCGObject = ObjectGenerator.getObjectByCGs(player, gameCGs[args]);
     currentCG = args;
     closeChildrenWindows();
     top.loadFile(path.join(__dirname, "startcg.html"));

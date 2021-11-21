@@ -1,9 +1,9 @@
-var playable = window.api.sendSync("ask-playable");
-var currentPlayable = window.api.sendSync("ask-current-playable");
-var currentPlayableId = window.api.sendSync("ask-current-playable-id");
-var playedPlayables = window.api.sendSync("ask-played-playables");
-console.log("played playables");
-console.log(playedPlayables);
+var object = window.api.sendSync("ask-object");
+var currentObject = window.api.sendSync("ask-current-object");
+var currentObjectId = window.api.sendSync("ask-current-object-id");
+var playedObjects = window.api.sendSync("ask-played-objects");
+console.log("played objects");
+console.log(playedObjects);
 var saves = window.api.sendSync("ask-saves");
 var containerSaves = document.getElementById("containerSaves");
 var buttonReturn = document.getElementById("buttonReturn");
@@ -52,34 +52,32 @@ function addButton() {
     }
 }
 function newSave(button, position) {
-    let text = playable[currentPlayable].text;
-    console.log(text);
+    let text = object[currentObject].text;
     if (text == null || text == undefined)
         text = "Save";
     if (text.length > 10)
-        text = text.substring(0, 10) + "...";
-    text = text + "\nDate: " + (new Date).toLocaleString();
+        text = (text.substring(0, 10) + "...");
+    text = text + "\n" + (new Date).toLocaleString();
     saves.push({
         "text": text,
-        "playableId": currentPlayableId,
-        "playedPlayables": playedPlayables
+        "objectId": currentObjectId,
+        "playedObjects": playedObjects
     });
     button.innerText = text;
     console.log(saves);
     window.api.send("set-game-saves", saves);
 }
 function eraseSave(button, position) {
-    let text = playable[currentPlayable].text;
-    console.log(text);
+    let text = object[currentObject].text;
     if (text == null || text == undefined)
         text = "Save";
     if (text.length > 10)
-        text = text.substring(0, 10) + "...";
-    text = text + "\nDate: " + (new Date).toLocaleString();
+        text = (text.substring(0, 10) + "...");
+    text = text + "\n" + (new Date).toLocaleString();
     console.log(position);
     button.innerText = text;
     saves[position].text = text;
-    saves[position].playableId = currentPlayableId;
+    saves[position].objectId = currentObjectId;
     console.log(saves);
     window.api.send("set-game-saves", saves);
 }
